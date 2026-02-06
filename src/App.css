@@ -1,111 +1,213 @@
 :root {
   --primary: #2e7d32;
+  --primary-dark: #1b5e20;
   --bg: #f3f4f6;
   --card-bg: #ffffff;
   --text: #1f2937;
   --border: #e5e7eb;
 }
 
+/* 1. FORCE FULL HEIGHT & WIDTH */
+html,
 body {
+  height: 100%;
   margin: 0;
-  padding: 0;
   background-color: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
 }
 
+body {
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* 2. CONTAINER FILLS THE SCREEN */
 .container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  /* Limits width only on tablets/desktop */
+  padding: 16px;
+  /* Comfortable padding from the edge */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 5px;
 }
 
 h1 {
-  text-align: center;
+  margin: 0;
+  font-size: 2.2rem;
+  /* Bigger Title */
   color: var(--primary);
-  margin-top: 0;
+  letter-spacing: -1px;
 }
 
-/* Card Style */
+/* 3. CARDS: CLEAN & FULL WIDTH */
 .card {
   background: var(--card-bg);
   padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: 20px;
+  /* Softer, app-like corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  text-align: center;
-}
-
-.stat-box {
-  background: #ecfdf5;
-  /* Light green tint */
-  padding: 15px;
-  border-radius: 12px;
-}
-
-.stat-val {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--primary);
-}
-
-.stat-label {
-  font-size: 0.85rem;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-/* Form Styles */
+/* 4. FORM ELEMENTS: THUMB FRIENDLY */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #4b5563;
 }
 
-input,
+/* Big, tap-able dropdown */
 select {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 16px;
-  /* Prevents iOS zoom */
-  box-sizing: border-box;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1.2rem;
+  /* Larger text */
+  background-color: #fff;
+  appearance: none;
+  /* Removes default OS styling for a cleaner look */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
 }
 
+/* 5. STEPPER: MASSIVE BUTTONS */
+.stepper-container {
+  margin: 10px 0 25px 0;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  /* Space between buttons and number */
+}
+
+.step-btn {
+  flex: 1;
+  /* Buttons grow to fill space */
+  height: 70px;
+  /* Tall hit area */
+  border-radius: 16px;
+  border: none;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  /* Removes tap delay on mobile */
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.step-btn.minus {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.step-btn.plus {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.step-btn:active {
+  transform: scale(0.95);
+}
+
+.step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.step-display {
+  font-size: 4rem;
+  /* HUGE number */
+  font-weight: 800;
+  color: var(--text);
+  width: 80px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* 6. BIG ACTION BUTTONS */
 .save-btn {
   width: 100%;
-  padding: 14px;
+  padding: 18px;
   background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(46, 125, 50, 0.3);
   cursor: pointer;
-  margin-top: 10px;
 }
 
 .save-btn:active {
-  transform: scale(0.98);
+  background-color: var(--primary-dark);
+  transform: translateY(2px);
 }
 
-/* History List */
+/* ACTIVE SESSION CARD (Yellow) */
+.active-session-card {
+  border: 2px solid #fbbf24;
+  background: #fffbeb;
+}
+
+.session-summary {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 15px 0;
+  color: #b45309;
+}
+
+.finish-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* HISTORY LIST */
 .history-list {
   list-style: none;
   padding: 0;
@@ -116,142 +218,51 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--border);
 }
 
-.history-item:last-child {
-  border-bottom: none;
-}
-
-.history-score {
-  font-weight: 700;
+.history-info {
   font-size: 1.1rem;
-  display: block;
-}
-
-.pct-badge {
-  background: #ecfdf5;
-  color: var(--primary);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  margin-left: 5px;
-}
-
-.history-meta {
-  font-size: 0.85rem;
-  color: #6b7280;
 }
 
 .delete-btn {
   background: none;
   border: none;
   color: #ef4444;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 5px 10px;
+  font-size: 1.5rem;
+  /* Easy to tap X */
+  padding: 10px;
+}
+
+/* Session List Styles */
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.session-date {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.session-badge {
+  background-color: var(--primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
 .empty-state {
   text-align: center;
   color: #9ca3af;
+  padding: 20px;
   font-style: italic;
 }
 
-/* NEW STEPPER STYLES */
-.stepper-container {
-  margin: 20px 0;
-}
-
-.stepper-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 10px;
-  border: 1px solid var(--border);
-}
-
-.step-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  border: none;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.1s;
-}
-
-.step-btn.minus {
-  background-color: #fee2e2;
-  color: #ef4444;
-}
-
-.step-btn.plus {
-  background-color: #dcfce7;
-  color: #166534;
-}
-
-.step-btn:active {
-  transform: scale(0.95);
-}
-
-.step-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.step-display {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--text);
-  width: 60px;
-  text-align: center;
-}
-
-.active-session-card {
-  border: 2px solid #fbbf24;
-  /* Amber border for "Active" */
-  background: #fffbeb;
-  /* Very light amber bg */
-}
-
-.session-summary {
-  text-align: center;
-  font-weight: bold;
-  margin: 15px 0;
-  color: #b45309;
-}
-
-.finish-btn {
-  width: 100%;
-  padding: 14px;
-  background-color: #1f2937;
-  /* Dark Grey/Black */
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.finish-btn:active {
-  transform: scale(0.98);
-}
-
-/* ... Keep all previous CSS ... */
-
-/* NEW: Reset Link Style */
 .reset-link {
   display: block;
   width: 100%;
@@ -259,42 +270,7 @@ select {
   background: none;
   border: none;
   color: #ef4444;
-  /* Red */
-  font-size: 0.8rem;
-  margin-top: 15px;
-  cursor: pointer;
-  text-decoration: underline;
-  opacity: 0.7;
-}
-
-/* NEW: Enhanced History Item Styles */
-.session-item {
-  align-items: flex-start;
-  /* Align delete button to top */
-}
-
-.session-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.session-date {
-  font-weight: 700;
-  color: var(--text);
-}
-
-.session-badge {
-  background-color: var(--primary);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: bold;
   font-size: 0.9rem;
-}
-
-.session-details {
-  font-size: 0.85rem;
-  color: #6b7280;
+  padding: 20px;
+  text-decoration: underline;
 }
