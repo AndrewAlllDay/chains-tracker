@@ -2,56 +2,76 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  // 1. STATE: Load from LocalStorage or start empty
-  const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('puttingSessions');
+  const ATTEMPTS_PER_ROUND = 5;
+
+  // 1. STATE
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem('puttingHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [currentRounds, setCurrentRounds] = useState(() => {
+    const saved = localStorage.getItem('currentDraft');
     return saved ? JSON.parse(saved) : [];
   });
 
   const [distance, setDistance] = useState(20);
-  const [attempts, setAttempts] = useState(10);
   const [made, setMade] = useState(0);
 
-  // 2. EFFECT: Auto-save whenever 'sessions' changes
+  // 2. EFFECTS
   useEffect(() => {
-    localStorage.setItem('puttingSessions', JSON.stringify(sessions));
-  }, [sessions]);
+    localStorage.setItem('puttingHistory', JSON.stringify(history));
+  }, [history]);
 
-  // 3. ACTION: Add Session
-  const addSession = (e) => {
+  useEffect(() => {
+    localStorage.setItem('currentDraft', JSON.stringify(currentRounds));
+  }, [currentRounds]);
+
+  // 3. LOGIC
+  const increment = () => { if (made < ATTEMPTS_PER_ROUND) setMade(made + 1); };
+  const decrement = () => { if (made > 0) setMade(made - 1); };
+
+  const logRound = (e) => {
     e.preventDefault();
-
-    // Validation
-    const numAttempts = parseInt(attempts);
-    const numMade = parseInt(made);
-
-    if (numMade > numAttempts) return alert("You can't make more than you attempt!");
-    if (numAttempts < 1) return alert("Attempts must be at least 1");
-
-    const newSession = {
+    const newRound = {
       id: Date.now(),
-      date: new Date().toLocaleDateString(),
       distance,
-      attempts: numAttempts,
-      made: numMade
+      attempts: ATTEMPTS_PER_ROUND,
+      made: made
     };
-
-    // Add to top of list
-    setSessions([newSession, ...sessions]);
-    setMade(0); // Reset 'Made' for rapid entry
+    setCurrentRounds([newRound, ...currentRounds]);
+    setMade(0);
   };
 
-  // 4. ACTION: Delete Session
-  const deleteSession = (id) => {
-    if (confirm("Delete this entry?")) {
-      setSessions(sessions.filter(s => s.id !== id));
+  const finishSession = () => {
+    if (currentRounds.length === 0) return;
+    if (confirm("Finish this session and save to history?")) {
+      const totalAtt = currentRounds.reduce((acc, r) => acc + r.attempts, 0);
+      const totalMade = currentRounds.reduce((acc, r) => acc + r.made, 0);
+
+      const newSession = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString(),
+        rounds: currentRounds,
+        summary: { attempts: totalAtt, made: totalMade }
+      };
+
+      setHistory([newSession, ...history]);
+      setCurrentRounds([]);
     }
   };
 
-  // 5. STATS CALCULATION
-  const totalAttempts = sessions.reduce((acc, curr) => acc + curr.attempts, 0);
-  const totalMade = sessions.reduce((acc, curr) => acc + curr.made, 0);
-  const accuracy = totalAttempts === 0 ? 0 : Math.round((totalMade / totalAttempts) * 100);
+  const deleteDraftRound = (id) => setCurrentRounds(currentRounds.filter(r => r.id !== id));
+
+  const deleteHistorySession = (id) => {
+    if (confirm("Delete this entire past session?")) setHistory(history.filter(s => s.id !== id));
+  }
+
+  const clearAllHistory = () => {
+    if (confirm("⚠ WARNING: This will permanently delete ALL lifetime stats and past sessions. Are you sure?")) {
+      setHistory([]);
+    }
+  }
 
   return (
     <div className="container">
@@ -59,21 +79,9 @@ function App() {
         <h1>Chains ⛓️</h1>
       </header>
 
-      {/* STATS CARD */}
-      <div className="card stats-grid">
-        <div className="stat-box">
-          <div className="stat-val">{totalAttempts}</div>
-          <div className="stat-label">Total Putts</div>
-        </div>
-        <div className="stat-box">
-          <div className="stat-val">{accuracy}%</div>
-          <div className="stat-label">Accuracy</div>
-        </div>
-      </div>
-
-      {/* INPUT FORM CARD */}
-      <div className="card">
-        <form onSubmit={addSession}>
+      {/* INPUT AREA (Now at the top) */}
+      <div className="card input-card">
+        <form onSubmit={logRound}>
           <div className="form-group">
             <label>Distance</label>
             <select value={distance} onChange={(e) => setDistance(e.target.value)}>
@@ -85,54 +93,72 @@ function App() {
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Attempts</label>
-            <input
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={attempts}
-              onChange={(e) => setAttempts(e.target.value)}
-            />
+          <div className="stepper-container">
+            <label style={{ textAlign: 'center', marginBottom: '10px' }}>
+              Putts Made (of {ATTEMPTS_PER_ROUND})
+            </label>
+            <div className="stepper-controls">
+              <button type="button" className="step-btn minus" onClick={decrement} disabled={made === 0}>−</button>
+              <div className="step-display">{made}</div>
+              <button type="button" className="step-btn plus" onClick={increment} disabled={made === ATTEMPTS_PER_ROUND}>+</button>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Made</label>
-            <input
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={made}
-              onChange={(e) => setMade(e.target.value)}
-            />
-          </div>
-
-          <button type="submit" className="save-btn">Log Session</button>
+          <button type="submit" className="save-btn">Log Round</button>
         </form>
       </div>
 
-      {/* HISTORY LIST */}
-      <div className="card">
-        <h3>History</h3>
-        {sessions.length === 0 ? (
-          <p className="empty-state">No sessions yet. Go practice!</p>
-        ) : (
+      {/* ACTIVE SESSION */}
+      {currentRounds.length > 0 && (
+        <div className="card active-session-card">
+          <h3>Current Session</h3>
           <ul className="history-list">
-            {sessions.map(s => (
-              <li key={s.id} className="history-item">
+            {currentRounds.map(r => (
+              <li key={r.id} className="history-item">
                 <div className="history-info">
-                  <span className="history-score">
-                    {s.made}/{s.attempts} <span className="pct-badge">{Math.round((s.made / s.attempts) * 100)}%</span>
-                  </span>
-                  <span className="history-meta">{s.distance}ft • {s.date}</span>
+                  <strong>{r.made}/{r.attempts}</strong> at {r.distance}ft
                 </div>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteSession(s.id)}
-                >✕</button>
+                <button className="delete-btn" onClick={() => deleteDraftRound(r.id)}>✕</button>
               </li>
             ))}
           </ul>
+          <div className="session-summary">
+            Total: {currentRounds.reduce((a, c) => a + c.made, 0)} / {currentRounds.reduce((a, c) => a + c.attempts, 0)}
+          </div>
+          <button className="finish-btn" onClick={finishSession}>Finish & Save Session</button>
+        </div>
+      )}
+
+      {/* PAST HISTORY */}
+      <div className="card">
+        <h3>Past Sessions</h3>
+        {history.length === 0 ? (
+          <p className="empty-state">No saved sessions.</p>
+        ) : (
+          <ul className="history-list">
+            {history.map(session => {
+              const sessPct = Math.round((session.summary.made / session.summary.attempts) * 100);
+              return (
+                <li key={session.id} className="history-item session-item">
+                  <div style={{ width: '100%' }}>
+                    <div className="session-header">
+                      <span className="session-date">{session.date}</span>
+                      <span className="session-badge">{sessPct}%</span>
+                    </div>
+                    <div className="session-details">
+                      {session.summary.made} of {session.summary.attempts} total putts
+                    </div>
+                  </div>
+                  <button className="delete-btn" onClick={() => deleteHistorySession(session.id)}>✕</button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+
+        {/* Reset Link moved here to the bottom */}
+        {history.length > 0 && (
+          <button className="reset-link" onClick={clearAllHistory}>Reset All Data</button>
         )}
       </div>
     </div>

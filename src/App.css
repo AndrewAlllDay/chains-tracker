@@ -158,3 +158,143 @@ select {
   color: #9ca3af;
   font-style: italic;
 }
+
+/* NEW STEPPER STYLES */
+.stepper-container {
+  margin: 20px 0;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+}
+
+.step-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.step-btn.minus {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.step-btn.plus {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.step-btn:active {
+  transform: scale(0.95);
+}
+
+.step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.step-display {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text);
+  width: 60px;
+  text-align: center;
+}
+
+.active-session-card {
+  border: 2px solid #fbbf24;
+  /* Amber border for "Active" */
+  background: #fffbeb;
+  /* Very light amber bg */
+}
+
+.session-summary {
+  text-align: center;
+  font-weight: bold;
+  margin: 15px 0;
+  color: #b45309;
+}
+
+.finish-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #1f2937;
+  /* Dark Grey/Black */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.finish-btn:active {
+  transform: scale(0.98);
+}
+
+/* ... Keep all previous CSS ... */
+
+/* NEW: Reset Link Style */
+.reset-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #ef4444;
+  /* Red */
+  font-size: 0.8rem;
+  margin-top: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+/* NEW: Enhanced History Item Styles */
+.session-item {
+  align-items: flex-start;
+  /* Align delete button to top */
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.session-date {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.session-badge {
+  background-color: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.session-details {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
