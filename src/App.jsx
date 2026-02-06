@@ -128,7 +128,6 @@ function App() {
           <button className="finish-btn" onClick={finishSession}>Finish & Save Session</button>
         </div>
       )}
-
       {/* PAST HISTORY */}
       <div className="card">
         <h3>Past Sessions</h3>
@@ -137,13 +136,30 @@ function App() {
         ) : (
           <ul className="history-list">
             {history.map(session => {
+              // 1. Calculate Percentage
               const sessPct = Math.round((session.summary.made / session.summary.attempts) * 100);
+
+              // 2. Traffic Light Logic
+              let badgeColor = '#ef4444'; // Default Red (<= 50%)
+
+              if (sessPct >= 80) {
+                badgeColor = 'var(--primary)'; // Green (>= 80%)
+              } else if (sessPct > 50) {
+                badgeColor = '#d97706'; // Dark Amber/Yellow (51% - 79%)
+              }
+
               return (
                 <li key={session.id} className="history-item session-item">
-                  <div style={{ width: '100%' }}>
+                  <div style={{ width: '100%', paddingRight: '20px' }}>
                     <div className="session-header">
                       <span className="session-date">{session.date}</span>
-                      <span className="session-badge">{sessPct}%</span>
+
+                      <span
+                        className="session-badge pr-5"
+                        style={{ backgroundColor: badgeColor }}
+                      >
+                        {sessPct}%
+                      </span>
                     </div>
                     <div className="session-details">
                       {session.summary.made} of {session.summary.attempts} total putts
@@ -156,7 +172,6 @@ function App() {
           </ul>
         )}
 
-        {/* Reset Link moved here to the bottom */}
         {history.length > 0 && (
           <button className="reset-link" onClick={clearAllHistory}>Reset All Data</button>
         )}
