@@ -1,0 +1,482 @@
+:root {
+  --primary: #2e7d32;
+  --primary-dark: #1b5e20;
+  --bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text: #1f2937;
+  --border: #e5e7eb;
+}
+
+/* 1. FORCE FULL HEIGHT & WIDTH */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bg);
+}
+
+body {
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* 2. CONTAINER FILLS THE SCREEN */
+.container {
+  width: 100%;
+  max-width: 600px;
+  /* Limits width only on tablets/desktop */
+  padding: 16px;
+  /* Comfortable padding from the edge */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  /* Bigger Title */
+  color: var(--primary);
+  letter-spacing: -1px;
+}
+
+/* 3. CARDS: CLEAN & FULL WIDTH */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 20px;
+  /* Softer, app-like corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 4. FORM ELEMENTS: THUMB FRIENDLY */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+/* Big, tap-able dropdown */
+select {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1.2rem;
+  /* Larger text */
+  background-color: #fff;
+  appearance: none;
+  /* Removes default OS styling for a cleaner look */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
+}
+
+/* 5. STEPPER: MASSIVE BUTTONS */
+.stepper-container {
+  margin: 10px 0 25px 0;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  /* Space between buttons and number */
+}
+
+.step-btn {
+  flex: 1;
+  /* Buttons grow to fill space */
+  height: 70px;
+  /* Tall hit area */
+  border-radius: 16px;
+  border: none;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  /* Removes tap delay on mobile */
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.step-btn.minus {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.step-btn.plus {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.step-btn:active {
+  transform: scale(0.95);
+}
+
+.step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.step-display {
+  font-size: 4rem;
+  /* HUGE number */
+  font-weight: 800;
+  color: var(--text);
+  width: 80px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* 6. BIG ACTION BUTTONS */
+.save-btn {
+  width: 100%;
+  padding: 18px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(46, 125, 50, 0.3);
+  cursor: pointer;
+}
+
+.save-btn:active {
+  background-color: var(--primary-dark);
+  transform: translateY(2px);
+}
+
+/* ACTIVE SESSION CARD (Yellow) */
+.active-session-card {
+  border: 2px solid #fbbf24;
+  background: #fffbeb;
+}
+
+.session-summary {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 15px 0;
+  color: #b45309;
+}
+
+.finish-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* HISTORY LIST */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-info {
+  font-size: 1.1rem;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.5rem;
+  /* Easy to tap X */
+  padding: 10px;
+}
+
+/* Session List Styles */
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.session-date {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.session-badge {
+  background-color: var(--primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+  font-style: italic;
+}
+
+.reset-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.9rem;
+  padding: 20px;
+  text-decoration: underline;
+}
+
+/* --- NEW STYLES BELOW THIS LINE --- */
+
+/* HOME SCREEN STYLES */
+.big-start-btn {
+  width: 100%;
+  padding: 24px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+  cursor: pointer;
+  margin-bottom: 25px;
+  margin-top: 100px;
+  transition: transform 0.1s;
+}
+
+.big-start-btn:active {
+  transform: scale(0.98);
+}
+
+/* SESSION NAV */
+.session-nav {
+  margin-bottom: 10px;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 320px;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.modal-title {
+  margin-top: 0;
+  color: var(--text);
+  margin-bottom: 25px;
+}
+
+.mode-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: white;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mode-btn.primary {
+  border-color: var(--primary);
+  background-color: #f0fdf4;
+  /* Light green tint */
+  color: var(--primary);
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  margin-top: 15px;
+  color: #9ca3af;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ... Keep existing CSS ... */
+
+/* LEAGUE SPECIFIC STYLES */
+
+.mode-btn.league {
+  background-color: #fff7ed;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.league-badge {
+  background-color: #f59e0b;
+  /* Amber/Gold */
+  color: white;
+}
+
+/* UPDATED SCOREBOARD STYLES */
+.league-score-box {
+  display: flex;
+  /* Side by side */
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.score-item {
+  text-align: center;
+  flex: 1;
+}
+
+.score-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #cbd5e1;
+  /* Light gray line */
+  margin: 0 10px;
+}
+
+.league-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.league-total {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+/* Station Grid */
+.station-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* 2 columns */
+  gap: 12px;
+}
+
+/* Make the 5th item span full width */
+.station-grid button:last-child {
+  grid-column: span 2;
+}
+
+.station-btn {
+  background: white;
+  border: 2px solid var(--border);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.station-btn.done {
+  background-color: #f0fdf4;
+  border-color: var(--primary);
+}
+
+.station-num {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.station-pts {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 5px;
+}
+
+.station-result {
+  font-weight: bold;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
