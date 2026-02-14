@@ -1,0 +1,1116 @@
+/* 1. Import the font at the top of the file */
+@import url('https://fonts.googleapis.com/css2?family=Fugaz+One&family=Gabarito:wght@400..900&display=swap');
+
+:root {
+  --primary: #FF5722;
+  --secondary: #1e293b;
+
+  --bg-color: #f3f4f6;
+  --card-bg: #f9fafb;
+
+  --text-color: #1f2937;
+  --text-muted: #6b7280;
+}
+
+/* 1. FORCE FULL HEIGHT & WIDTH */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bg);
+}
+
+body {
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* 2. CONTAINER FILLS THE SCREEN */
+.container {
+  width: 100%;
+  max-width: 600px;
+  /* Limits width only on tablets/desktop */
+  padding: 16px;
+  /* Comfortable padding from the edge */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  /* Bigger Title */
+  color: var(--primary);
+  letter-spacing: -1px;
+}
+
+/* 3. CARDS: CLEAN & FULL WIDTH */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 20px;
+  /* Softer, app-like corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 4. FORM ELEMENTS: THUMB FRIENDLY */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+/* Big, tap-able dropdown */
+select {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1.2rem;
+  /* Larger text */
+  background-color: #fff;
+  appearance: none;
+  /* Removes default OS styling for a cleaner look */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
+}
+
+/* 5. STEPPER: MASSIVE BUTTONS */
+.stepper-container {
+  margin: 10px 0 25px 0;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  /* Space between buttons and number */
+}
+
+.step-btn {
+  flex: 1;
+  /* Buttons grow to fill space */
+  height: 70px;
+  /* Tall hit area */
+  border-radius: 16px;
+  border: none;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  /* Removes tap delay on mobile */
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.step-btn.minus {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.step-btn.plus {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.step-btn:active {
+  transform: scale(0.95);
+}
+
+.step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.step-display {
+  font-size: 4rem;
+  /* HUGE number */
+  font-weight: 800;
+  color: var(--text);
+  width: 80px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* 6. BIG ACTION BUTTONS */
+.save-btn {
+  width: 100%;
+  padding: 18px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(46, 125, 50, 0.3);
+  cursor: pointer;
+}
+
+.save-btn:active {
+  background-color: var(--primary-dark);
+  transform: translateY(2px);
+}
+
+/* ACTIVE SESSION CARD (Yellow) */
+.active-session-card {
+  border: 2px solid #fbbf24;
+  background: #fffbeb;
+}
+
+.session-summary {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 15px 0;
+  color: #b45309;
+}
+
+.finish-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* HISTORY LIST */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-info {
+  font-size: 1.1rem;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.5rem;
+  /* Easy to tap X */
+  padding: 10px;
+}
+
+/* Session List Styles */
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.session-date {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.session-badge {
+  background-color: var(--primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+  font-style: italic;
+}
+
+.reset-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.9rem;
+  padding: 20px;
+  text-decoration: underline;
+}
+
+/* --- NEW STYLES BELOW THIS LINE --- */
+
+/* HOME SCREEN STYLES */
+.big-start-btn {
+  width: 100%;
+  padding: 24px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+  cursor: pointer;
+  margin-bottom: 25px;
+  margin-top: 100px;
+  transition: transform 0.1s;
+}
+
+.big-start-btn:active {
+  transform: scale(0.98);
+}
+
+/* SESSION NAV */
+.session-nav {
+  margin-bottom: 10px;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 320px;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.modal-title {
+  margin-top: 0;
+  color: var(--text);
+  margin-bottom: 25px;
+}
+
+.mode-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: white;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mode-btn.primary {
+  border-color: var(--primary);
+  background-color: #f0fdf4;
+  /* Light green tint */
+  color: var(--primary);
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  margin-top: 15px;
+  color: #9ca3af;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ... Keep existing CSS ... */
+
+/* LEAGUE SPECIFIC STYLES */
+
+.mode-btn.league {
+  background-color: #fff7ed;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.league-badge {
+  background-color: #f59e0b;
+  /* Amber/Gold */
+  color: white;
+}
+
+/* UPDATED SCOREBOARD STYLES */
+.league-score-box {
+  display: flex;
+  /* Side by side */
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.score-item {
+  text-align: center;
+  flex: 1;
+}
+
+.score-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #cbd5e1;
+  /* Light gray line */
+  margin: 0 10px;
+}
+
+.league-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.league-total {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+/* Station Grid */
+.station-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* 2 columns */
+  gap: 12px;
+}
+
+/* Make the 5th item span full width */
+.station-grid button:last-child {
+  grid-column: span 2;
+}
+
+.station-btn {
+  background: white;
+  border: 2px solid var(--border);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.station-btn.done {
+  background-color: #f0fdf4;
+  border-color: var(--primary);
+}
+
+.station-num {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.station-pts {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 5px;
+}
+
+.station-result {
+  font-weight: bold;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+/* Dashboard Styles */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.action-card.primary {
+  background: #1f2937;
+  color: white;
+}
+
+.action-card.secondary {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.action-card:active {
+  transform: scale(0.98);
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+}
+
+.stat-card h3 {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0;
+}
+
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 100px;
+  gap: 10px;
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+}
+
+.bar-val {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.bar-label {
+  font-size: 0.7rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+.circles-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.circle-stat {
+  text-align: center;
+}
+
+.circle-val {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.circle-val.green {
+  color: #10b981;
+}
+
+.circle-val.orange {
+  color: #f59e0b;
+}
+
+.circle-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.circle-sub {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 10px 0;
+}
+
+.league-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+  text-align: center;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.expand-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+/* --- DASHBOARD HERO & GRID --- */
+.hero-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.action-card.primary {
+  background: #1f2937;
+  color: white;
+}
+
+.action-card.secondary {
+  background: white;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+}
+
+.action-card:active {
+  transform: scale(0.98);
+}
+
+/* --- DASHBOARD STATS WIDGETS --- */
+.stats-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card h3 {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* The Bar Chart for Round Averages */
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 100px;
+  gap: 8px;
+  flex: 1;
+  /* Fills height */
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+}
+
+.bar-val {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.bar-label {
+  font-size: 0.7rem;
+  color: #999;
+  margin-top: 6px;
+}
+
+/* The Circle 1 vs Circle 2 Widget */
+.circles-card {
+  justify-content: space-around;
+}
+
+.circle-stat {
+  text-align: center;
+}
+
+.circle-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 5px 0;
+}
+
+.circle-val.green {
+  color: #10b981;
+}
+
+.circle-val.orange {
+  color: #f59e0b;
+}
+
+.circle-label {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.circle-sub {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 10px 20px;
+}
+
+/* --- HISTORY LIST STYLING --- */
+.section-title {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  background: var(--card-bg);
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.session-date {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #111;
+}
+
+.session-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+}
+
+.league-badge {
+  background-color: #f59e0b;
+}
+
+/* The Grid inside the History Card (R1 | R2 | R3 | Total) */
+.league-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+  text-align: center;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.league-mini-grid small {
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.league-mini-grid strong {
+  display: block;
+  font-size: 1rem;
+  color: #333;
+}
+
+.league-mini-grid .total-cell {
+  border-left: 1px solid #ddd;
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.league-mini-grid .total-cell strong {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+/* The "Show Stats" Button */
+.expand-btn {
+  width: 100%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expand-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* The Dropdown Area (Colored Bars) */
+.expanded-stats {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #e5e7eb;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reset-link {
+  background: none;
+  border: none;
+  color: #ef4444;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin: 20px auto;
+  display: block;
+}
+
+.brand-font {
+  font-family: 'Fugaz One', cursive;
+
+  font-weight: 900;
+}
+
+.version {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 10px;
+}
+
+
+/* --- LOGIN LANDING PAGE --- */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  /* Ensures vertical stacking works perfectly */
+  justify-content: center;
+  align-items: center;
+
+  /* The Magic Fixes: */
+  width: 100%;
+  height: 100vh;
+  /* Fallback for older browsers */
+  height: 100dvh;
+  /* Dynamic Viewport Height (Fixes mobile address bar scroll) */
+  box-sizing: border-box;
+  /* Includes padding in the total height calculation */
+  overflow: hidden;
+  /* cuts off any accidental spillover */
+
+  background-color: var(--card-bg);
+  padding: 20px;
+  text-align: center;
+}
+
+.slector-container {
+  display: flex;
+  flex-direction: column;
+  /* Ensures vertical stacking works perfectly */
+  justify-content: center;
+  align-items: center;
+
+  /* The Magic Fixes: */
+  width: 100%;
+  height: 100vh;
+  /* Fallback for older browsers */
+  height: 50dvh;
+  /* Dynamic Viewport Height (Fixes mobile address bar scroll) */
+  box-sizing: border-box;
+  /* Includes padding in the total height calculation */
+  overflow: hidden;
+  /* cuts off any accidental spillover */
+
+  background-color: var(--card-bg);
+  padding: 20px;
+  text-align: center;
+}
+
+.login-content {
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-logo-wrapper {
+  width: 280px;
+  margin: 0 auto 40px;
+}
+
+.login-logo-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.login-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: var(--text-color);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.login-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.google-signin-btn {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.google-signin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.google-icon {
+  background: white;
+  color: #333;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.login-footer {
+  margin-top: 40px;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* --- PERFECT ROUND HIGHLIGHTS (Sunset Snap Version) --- */
+.history-item.perfect-round {
+  /* Use the Primary Orange for the border */
+  border: 2px solid var(--primary);
+
+  /* A faint orange background glow */
+  background-color: rgba(255, 87, 34, 0.08);
+
+  /* A subtle orange shadow */
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.15);
+
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+  z-index: 10;
+  /* Ensures it pops above other cards */
+}
+
+/* Bad Round (0/5) - Keep distinct from the Navy/Orange */
+.history-item.bad-round {
+  border-left: 4px solid #ef4444;
+  /* Red stripe on left */
+  background-color: rgba(239, 68, 68, 0.02);
+}
+
+.fire-icon {
+  font-size: 1.2rem;
+  margin-right: 8px;
+  animation: flicker 1.5s infinite alternate;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px orange);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 5px orange);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    /* Optional: adds a slight slide up effect */
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
