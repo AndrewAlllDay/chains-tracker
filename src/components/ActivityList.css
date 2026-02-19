@@ -1,0 +1,332 @@
+/* --- BASE CARD STYLES --- */
+.activity-card {
+    cursor: pointer;
+    margin-bottom: 16px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 16px;
+    transition: all 0.2s ease-in-out;
+    /* Default Practice Colors */
+    border-left: 6px solid var(--primary);
+}
+
+.activity-card .activity-score-val {
+    color: var(--primary);
+}
+
+.activity-card .badge-mode {
+    color: var(--primary-dark);
+}
+
+/* --- HEADER & BADGES --- */
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-date {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.activity-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-mode {
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-legacy {
+    font-size: 0.6rem;
+    background: var(--bg);
+    color: var(--text-muted);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 1px solid var(--border);
+}
+
+.badge-perfect {
+    font-size: 0.6rem;
+    background: #fff7ed;
+    color: var(--primary);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: 1px solid #ffedd5;
+}
+
+/* --- ORBIT / AROUND THE WORLD UI --- */
+.orbit-path-container {
+    padding: 24px 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow-x: auto;
+    /* Handle long sessions gracefully */
+}
+
+/* The straight horizontal line */
+.orbit-path-container::before {
+    content: '';
+    position: absolute;
+    top: 38px;
+    /* Centers with the circles */
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    border-top: 2px dashed #cbd5e1;
+    z-index: 1;
+}
+
+.orbit-nodes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    min-width: min-content;
+    gap: 12px;
+}
+
+.orbit-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.node-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 900;
+    transition: all 0.3s ease;
+}
+
+.node-circle.cleared {
+    background: #3b82f6;
+    border-color: #2563eb;
+    color: white;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.node-circle.peak {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    border-style: double;
+    border-width: 4px;
+}
+
+.node-label {
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+/* --- SCORE & ACTIONS --- */
+.activity-score-group {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.activity-score-val {
+    font-weight: 900;
+    font-size: 1.25rem;
+}
+
+.activity-score-sub {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: bold;
+}
+
+.activity-toggle {
+    color: #cbd5e1;
+    transition: transform 0.2s;
+}
+
+.activity-expanded {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--bg);
+}
+
+.activity-section-title {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+}
+
+.activity-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+    border-top: 1px solid #f8fafc;
+    padding-top: 10px;
+}
+
+.delete-btn {
+    color: #ef4444;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- MODE OVERRIDES --- */
+
+/* LEAGUE */
+.activity-card.league {
+    border-left: 6px solid var(--league) !important;
+}
+
+.activity-card.league .activity-score-val,
+.activity-card.league .badge-mode {
+    color: var(--league) !important;
+}
+
+.perf-box.total {
+    background: var(--league-light);
+    border: 1.5px solid var(--league);
+}
+
+.perf-box.total .perf-box-label,
+.perf-box.total .perf-box-val {
+    color: var(--league-dark);
+}
+
+/* AROUND THE WORLD */
+.activity-card.world {
+    border-left: 6px solid #3b82f6 !important;
+}
+
+.activity-card.world .activity-score-val,
+.activity-card.world .badge-mode {
+    color: #3b82f6 !important;
+}
+
+.badge-perfect.world {
+    background: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #dbeafe;
+}
+
+.activity-card.world .progress-track div {
+    background: linear-gradient(90deg, #93c5fd, #3b82f6) !important;
+}
+
+/* Standard Practice Gradient */
+.activity-card:not(.league):not(.world) .progress-track div {
+    background: linear-gradient(90deg, #fb923c, var(--primary));
+}
+
+/* --- OTHER UI ELEMENTS --- */
+.station-row,
+.dist-row {
+    margin-bottom: 12px;
+}
+
+.station-labels,
+.dist-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4px;
+}
+
+.station-name {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #475569;
+}
+
+.dist-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.station-frac,
+.dist-frac {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.dist-frac-hi {
+    color: var(--primary);
+}
+
+.progress-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.seq-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.seq-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.perf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.perf-box {
+    background: #f8fafc;
+    padding: 12px 4px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.perf-box-label {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.perf-box-val {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+}

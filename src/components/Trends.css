@@ -1,0 +1,356 @@
+.trends-wrapper {
+    margin-bottom: 30px;
+}
+
+/* Tabs */
+.trends-tabs {
+    display: flex;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+.trend-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.trend-tab.active {
+    background: var(--card-bg);
+    color: var(--text);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Donut Chart Specifics */
+.donut-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+.donut-outer {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.donut-inner {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: var(--card-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.donut-text {
+    text-align: left;
+}
+
+.donut-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.donut-sublabel {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+/* Weekly Trend Card */
+.weekly-trend-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weekly-trend-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.weekly-trend-sub {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.weekly-trend-stats {
+    text-align: right;
+}
+
+.weekly-trend-diff {
+    font-size: 1.4rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: flex-end;
+}
+
+.weekly-trend-diff.positive {
+    color: var(--league);
+}
+
+.weekly-trend-diff.negative {
+    color: #ef4444;
+}
+
+.weekly-trend-diff.practice-positive {
+    color: var(--primary);
+}
+
+.weekly-trend-totals {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    font-weight: bold;
+}
+
+/* Stat Cards & Bar Charts */
+.trends-stat-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.trends-stat-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.trends-stat-title.bar-title {
+    margin-bottom: 45px;
+}
+
+.bar-chart-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 110px;
+    padding-bottom: 10px;
+}
+
+.bar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.bar-val {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.bar-fill {
+    width: 28px;
+    border-radius: 4px;
+}
+
+.bar-fill.good {
+    background-color: var(--league-dark);
+}
+
+.bar-fill.warning {
+    background-color: #CC5500;
+}
+
+.bar-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: bold;
+}
+
+.empty-state-msg {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    text-align: center;
+    width: 100%;
+}
+
+.empty-state-msg.padded {
+    padding-bottom: 30px;
+}
+
+.stacked-donut-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    justify-content: center;
+}
+
+/* Scoring Potential Card */
+.scoring-potential-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.scoring-flex-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.scoring-val {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.scoring-val.highlight {
+    color: var(--league);
+}
+
+.scoring-val.highlight-practice {
+    color: var(--primary);
+}
+
+.scoring-label {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.scoring-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+}
+
+.scoring-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #fafafa;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+/* Distance List for Practice */
+.dist-trend-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg);
+}
+
+.dist-trend-row:last-child {
+    border-bottom: none;
+}
+
+.dist-trend-label {
+    font-weight: 800;
+    color: var(--text);
+    font-size: 0.85rem;
+    width: 40px;
+}
+
+.dist-trend-track {
+    flex: 1;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    margin: 0 15px;
+    overflow: hidden;
+}
+
+.dist-trend-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fb923c, var(--primary));
+    border-radius: 4px;
+}
+
+.dist-trend-pct {
+    font-weight: 900;
+    color: var(--primary);
+    font-size: 0.85rem;
+    width: 35px;
+    text-align: right;
+}
+
+.dist-trend-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 45px;
+    /* Fixed width to prevent jumping */
+}
+
+.dist-trend-fraction {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: -2px;
+}
+
+/* 1. The Base State (Closed/Idle) */
+.trends-toggle-btn {
+    background: white;
+    color: var(--text-muted);
+    border: 2px solid var(--border) !important;
+    /* Forces the grey border back */
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 0.80rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s ease;
+}
+
+/* 2. The Interaction States (To kill that blue/white leak) */
+.trends-toggle-btn:hover,
+.trends-toggle-btn:focus,
+.trends-toggle-btn:active {
+    /* If you want the border to disappear on hover, use transparent. 
+       If you want it to stay grey, use var(--border) */
+    border-color: var(--border) !important;
+    background-color: white !important;
+    color: var(--text-muted) !important;
+    outline: none !important;
+    box-shadow: none !important;
+}

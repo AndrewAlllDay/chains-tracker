@@ -1,0 +1,162 @@
+/* App Guide Specifics */
+.guide-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.guide-about {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 0 10px;
+}
+
+.guide-about h3 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.guide-about p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.guide-started-box {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+    display: flex;
+    justify-content: center;
+}
+
+.guide-role-badge {
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.guide-role-badge.league {
+    background: var(--league);
+    color: white;
+}
+
+.guide-role-badge.practice {
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.feature-card-header h4 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.feature-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Added the missing indicator stripe styles */
+.feature-card-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.guide-instruction-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    padding: 0 4px;
+}
+
+.guide-instruction-text strong {
+    color: var(--text);
+    font-weight: 800;
+}
+
+/* Updated the started-box to allow vertical stacking of instructions */
+.guide-started-box {
+    background: var(--bg);
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.guide-instruction-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Centering everything horizontally */
+    text-align: left;
+    /* Centering the text specifically */
+    width: 100%;
+}
+
+.guide-instruction-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 12px;
+    padding: 0 10px;
+}
+
+.guide-instruction-text strong {
+    color: var(--text);
+    font-weight: 800;
+}
+
+.guide-started-box {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* More space between League and Practice sections */
+}
+
+.guide-role-badge {
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    width: 65%;
+    /* Fixed width for better visual centering */
+}
