@@ -110,6 +110,13 @@ export default function Dashboard({
                     </div>
                 </div>
 
+                {/* ADD THIS STREAK MESSAGE BLOCK */}
+                {streakMilestone && (
+                    <div className="streak-milestone-banner">
+                        <p>{streakMilestone.msg}</p>
+                    </div>
+                )}
+
             </header>
 
             <ActionGrid
