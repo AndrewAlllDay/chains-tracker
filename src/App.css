@@ -407,6 +407,23 @@ button:active,
   display: none;
 }
 
+/* Specifically target the buttons inside the alert/confirm modal */
+.modal-content .secondary-btn,
+.modal-content button:not(.save-btn) {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  /* Small medium gray border */
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.modal-content button:not(.save-btn):active {
+  background-color: #f3f4f6 !important;
+}
+
 .mode-btn {
   display: block;
   width: 100%;

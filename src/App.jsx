@@ -223,7 +223,7 @@ function App() {
       onConfirm: () => setView('SINGLE_SESSION'),
       confirmText: 'Standard',
       onSecondary: () => setView('WORLD_SESSION'),
-      secondaryText: 'Around the World'
+      secondaryText: 'Around The World'
     });
   };
 
