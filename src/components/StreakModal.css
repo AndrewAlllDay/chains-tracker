@@ -1,3 +1,27 @@
+/* HEADER & CLOSE BUTTON */
+.streak-header {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.streak-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.streak-close-btn:active {
+    opacity: 0.6;
+}
+
+/* CONTENT STYLES */
 .streak-hero-icon {
     font-size: 3rem;
     margin-bottom: 10px;

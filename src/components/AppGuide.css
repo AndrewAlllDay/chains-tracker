@@ -1,9 +1,32 @@
-/* App Guide Specifics */
-.guide-header {
-    text-align: center;
-    margin-bottom: 20px;
+/* MODAL CONTAINER */
+.guide-modal-content {
+    border-radius: 28px !important;
+    padding: 24px !important;
 }
 
+.guide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.guide-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #1f1f1f;
+}
+
+.guide-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* ABOUT SECTION */
 .guide-about {
     text-align: center;
     margin-bottom: 25px;
@@ -24,22 +47,49 @@
     line-height: 1.5;
 }
 
+/* GETTING STARTED */
 .guide-started-box {
     background: var(--bg);
-    padding: 15px;
+    padding: 20px;
     border-radius: 16px;
     border: 1px dashed var(--border);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.guide-instruction-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.guide-instruction-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.guide-badge-container {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
 .guide-role-badge {
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
     justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .guide-role-badge.league {
@@ -50,113 +100,108 @@
 .guide-role-badge.practice {
     background: var(--card-bg);
     color: var(--text);
-}
-
-.feature-card {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 16px;
-    margin-bottom: 10px;
     border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
 }
 
-.feature-card-header {
+.guide-sub-badge-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 8px;
+    width: 100%;
 }
 
-.feature-card-header h4 {
-    margin: 0;
-    font-weight: 800;
-    font-size: 0.9rem;
-    color: var(--text);
-}
-
-.feature-card p {
-    margin: 0;
+.guide-sub-badge {
+    background: var(--bg);
     color: var(--text-muted);
-    font-size: 0.8rem;
-    line-height: 1.4;
+    border: 1px solid var(--border);
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: 10px;
 }
 
-/* Added the missing indicator stripe styles */
-.feature-card-indicator {
+/* ACCORDION STYLES */
+.accordion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* Slightly more gap looks better with extended borders */
+}
+
+.accordion-item {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    /* Required for the indicator */
+    transition: all 0.2s ease;
+}
+
+.accordion-item.active {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-indicator {
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 4px;
+    z-index: 10;
 }
 
-.guide-instruction-text {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    line-height: 1.4;
-    margin-bottom: 8px;
-    padding: 0 4px;
-}
-
-.guide-instruction-text strong {
-    color: var(--text);
-    font-weight: 800;
-}
-
-/* Updated the started-box to allow vertical stacking of instructions */
-.guide-started-box {
-    background: var(--bg);
-    padding: 18px;
-    border-radius: 16px;
-    border: 1px dashed var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.guide-instruction-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Centering everything horizontally */
-    text-align: left;
-    /* Centering the text specifically */
+.accordion-header {
     width: 100%;
-}
-
-.guide-instruction-text {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    line-height: 1.4;
-    margin-bottom: 12px;
-    padding: 0 10px;
-}
-
-.guide-instruction-text strong {
-    color: var(--text);
-    font-weight: 800;
-}
-
-.guide-started-box {
-    background: var(--bg);
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px dashed var(--border);
     display: flex;
-    flex-direction: column;
-    gap: 24px;
-    /* More space between League and Practice sections */
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 16px 20px;
+    /* Left padding ensures space from indicator */
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.guide-role-badge {
-    border-radius: 10px;
-    padding: 10px;
+.accordion-header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    justify-content: center;
-    width: 65%;
-    /* Fixed width for better visual centering */
+    gap: 12px;
+}
+
+.accordion-header-left span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.chevron-icon {
+    color: #79747e;
+    transition: transform 0.3s ease;
+}
+
+.chevron-icon.rotated {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion-content.show {
+    max-height: 600px;
+}
+
+.accordion-content-inner {
+    padding: 0 16px 20px 48px;
+    /* Extra left padding to align content away from stripe */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #4b5563;
 }
