@@ -19,7 +19,7 @@ export default function SettingsModal({
 
                 <div className="settings-header">
                     <h2>Settings</h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <button onClick={onClose} className='no-border' style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                         <X size={24} color="#44474e" />
                     </button>
                 </div>
