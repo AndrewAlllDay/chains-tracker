@@ -74,7 +74,7 @@ export default function Dashboard({
                         </h2>
                         <p style={{ fontSize: '1.2rem', opacity: 0.9, lineHeight: '1.6' }}>
                             {isLeagueMode
-                                ? "Select a mode below to start your official league night or a warm-up session."
+                                ? "Select a mode below to start your official league night or solo practice session."
                                 : "Start your first practice session below to begin tracking your stats and trends."}
                         </p>
                         {/* Pointer removed - the pulse handles the focus now */}
