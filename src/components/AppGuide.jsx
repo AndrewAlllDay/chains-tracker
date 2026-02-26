@@ -22,7 +22,18 @@ const AppGuide = ({ isOpen, onClose, userRole }) => {
             icon: <Trophy size={18} color="var(--league)" strokeWidth={2.5} />,
             color: "var(--league)",
             role: "league",
-            content: "League sessions use a weighted system (1-5 pts). Station 1-3 is Circle 1; Station 4-5 is Circle 2. Every make adds points based on the station value."
+            content: (
+                <div>
+                    <p>League sessions use a weighted system (1-5 pts):</p>
+                    <ul style={{ listStyleType: 'none', paddingLeft: '1rem', marginTop: '0.5rem' }}>
+                        <li>Stations 1-3 is Circle 1</li>
+                        <li>Stations 4-5 is Circle 2</li>
+                    </ul>
+                    <p style={{ marginTop: '0.5rem' }}>
+                        Every make adds points based on the station value.
+                    </p>
+                </div>
+            )
         },
         {
             title: "Standard Practice",
