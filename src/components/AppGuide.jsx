@@ -156,7 +156,7 @@ const AppGuide = ({ isOpen, onClose, userRole }) => {
                                 <div className="guide-badge-container">
                                     <div className="guide-role-badge league">
                                         <Trophy size={16} color="currentColor" strokeWidth={2.5} />
-                                        <strong style={{ fontSize: '0.7rem' }}>League</strong>
+                                        <strong style={{ fontSize: '1rem' }}>League</strong>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +169,7 @@ const AppGuide = ({ isOpen, onClose, userRole }) => {
                             <div className="guide-badge-container">
                                 <div className="guide-role-badge practice">
                                     <Target size={16} color="currentColor" strokeWidth={2.5} />
-                                    <strong style={{ fontSize: '0.7rem' }}>Practice</strong>
+                                    <strong style={{ fontSize: '1rem' }}>Practice</strong>
                                 </div>
                                 <div className="guide-sub-badge-row">
                                     <div className="guide-sub-badge">Standard</div>

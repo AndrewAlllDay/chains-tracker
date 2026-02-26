@@ -15,7 +15,7 @@ import { Settings } from 'lucide-react';
 export default function Dashboard({
     user, userRole, history, startSingleSession, startLeagueSession, deleteHistorySession,
     onManualMerge, handleLogout, userSettings, updateSettings, showSettings, setShowSettings, handleRoleSelect,
-    setShowGuideModal, logoIcon
+    setShowGuideModal, logoIcon, showGuideModal // Assuming showGuideModal is passed or managed
 }) {
     const [expandedSession, setExpandedSession] = useState(null);
     const [showStats, setShowStats] = useState(false);
@@ -34,11 +34,41 @@ export default function Dashboard({
         return steps[tourStepIndex] || "none";
     }, [showFirstSessionOverlay, tourStepIndex]);
 
+    // Robust Scroll Lock for all modals and overlays
     useEffect(() => {
-        const isOverlayActive = showOnboarding || showFirstSessionOverlay;
-        document.body.classList.toggle('no-scroll', isOverlayActive);
-        return () => document.body.classList.remove('no-scroll');
-    }, [showOnboarding, showFirstSessionOverlay]);
+        const isOverlayActive =
+            showOnboarding ||
+            showFirstSessionOverlay ||
+            showSettings ||
+            showStreakModal ||
+            showGuideModal;
+
+        const body = document.body;
+
+        if (isOverlayActive) {
+            const scrollY = window.scrollY;
+            body.style.position = 'fixed';
+            body.style.top = `-${scrollY}px`;
+            body.style.width = '100%';
+            body.classList.add('no-scroll');
+        } else {
+            const scrollY = body.style.top;
+            body.style.position = '';
+            body.style.top = '';
+            body.style.width = '';
+            body.classList.remove('no-scroll');
+            if (scrollY) {
+                window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            }
+        }
+
+        return () => {
+            body.style.position = '';
+            body.style.top = '';
+            body.style.width = '';
+            body.classList.remove('no-scroll');
+        };
+    }, [showOnboarding, showFirstSessionOverlay, showSettings, showStreakModal, showGuideModal]);
 
     const toggleSession = (id) => setExpandedSession(expandedSession === id ? null : id);
     const safeHistory = Array.isArray(history) ? history : [];
@@ -79,7 +109,6 @@ export default function Dashboard({
 
                 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', position: 'relative', padding: '20px 0', marginBottom: '10px' }}>
 
-                    {/* BREAKING OUT: top: -10px pulls it above the container padding */}
                     <div style={{ position: 'absolute', left: '0', top: '-10px', zIndex: activeHighlight === 'guide' ? 6005 : 2 }}>
                         <div className={activeHighlight === 'guide' ? 'tour-highlight-active' : ''} style={{ borderRadius: '8px', display: 'inline-flex' }}>
                             <button onClick={() => !showFirstSessionOverlay && setShowGuideModal(true)} className="secondary-btn" style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: '600', margin: 0 }}>
@@ -92,7 +121,6 @@ export default function Dashboard({
                         <img src={logoIcon} alt="DIALED Logo" style={{ width: '100%', height: 'auto', display: 'block' }} />
                     </div>
 
-                    {/* BREAKING OUT: top: -10px pulls it above the container padding */}
                     <div style={{ position: 'absolute', right: '0', top: '-10px', zIndex: activeHighlight === 'settings' ? 6005 : 2 }}>
                         <div className={activeHighlight === 'settings' ? 'tour-highlight-active' : ''} style={{ borderRadius: '50%', display: 'inline-flex' }}>
                             <button onClick={() => !showFirstSessionOverlay && setShowSettings(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', opacity: 0.6, margin: 0 }}>
@@ -110,7 +138,6 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* ADD THIS STREAK MESSAGE BLOCK */}
                 {streakMilestone && (
                     <div className="streak-milestone-banner">
                         <p>{streakMilestone.msg}</p>
@@ -122,7 +149,7 @@ export default function Dashboard({
             <ActionGrid
                 isLeagueMode={userRole === 'league'}
                 userRole={userRole}
-                showOnboarding={showOnboarding} // Pass this prop
+                showOnboarding={showOnboarding}
                 onStartSession={handleStartSession}
             />
 
