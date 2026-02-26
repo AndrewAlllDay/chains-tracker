@@ -109,7 +109,7 @@ export default function Dashboard({
 
                 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', position: 'relative', padding: '20px 0', marginBottom: '10px' }}>
 
-                    <div style={{ position: 'absolute', left: '0', top: '-10px', zIndex: activeHighlight === 'guide' ? 6005 : 2 }}>
+                    <div style={{ position: 'absolute', left: '-10px', top: '-10px', zIndex: activeHighlight === 'guide' ? 6005 : 2 }}>
                         <div className={activeHighlight === 'guide' ? 'tour-highlight-active' : ''} style={{ borderRadius: '8px', display: 'inline-flex' }}>
                             <button onClick={() => !showFirstSessionOverlay && setShowGuideModal(true)} className="secondary-btn" style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: '600', margin: 0 }}>
                                 Guide
@@ -121,7 +121,7 @@ export default function Dashboard({
                         <img src={logoIcon} alt="DIALED Logo" style={{ width: '100%', height: 'auto', display: 'block' }} />
                     </div>
 
-                    <div style={{ position: 'absolute', right: '0', top: '-10px', zIndex: activeHighlight === 'settings' ? 6005 : 2 }}>
+                    <div style={{ position: 'absolute', right: '-20px', top: '-10px', zIndex: activeHighlight === 'settings' ? 6005 : 2 }}>
                         <div className={activeHighlight === 'settings' ? 'tour-highlight-active' : ''} style={{ borderRadius: '50%', display: 'inline-flex' }}>
                             <button onClick={() => !showFirstSessionOverlay && setShowSettings(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', opacity: 0.6, margin: 0 }}>
                                 <Settings size={24} strokeWidth={2.5} color="#6b7280" />
