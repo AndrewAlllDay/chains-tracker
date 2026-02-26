@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Trophy, Target, Flame, Zap, Snowflake } from 'lucide-react';
 import StreakModal from "./StreakModal";
 import SettingsModal from "./SettingsModal";
 import ActivityList from './ActivityList';
 import Trends from './Trends';
+import OnboardingOverlay from './OnboardingOverlay';
+import StreakPill from './StreakPill';
+import ActionGrid from './ActionGrid';
 import { useStreak } from '../hooks/useStreak';
 import './Dashboard.css';
 
@@ -67,117 +69,90 @@ export default function Dashboard({
         <div className="dashboard container" style={{ position: 'relative', minHeight: '100vh' }}>
 
             {showOnboarding && (
-                <div className="onboarding-overlay" onClick={() => handleStartSession('DISMISS')}>
-                    <div className="coach-content-wrapper">
-                        <h2 style={{ fontSize: '2.2rem', fontWeight: '900', marginBottom: '10px' }}>
-                            {isLeagueMode ? "Welcome to Putting Practice!" : "Welcome to Putting Practice?"}
-                        </h2>
-                        <p style={{ fontSize: '1.2rem', opacity: 0.9, lineHeight: '1.6' }}>
-                            {isLeagueMode
-                                ? "Select a mode below to start your official league night or solo practice session."
-                                : "Start your first practice session below to begin tracking your stats and trends."}
-                        </p>
-                        {/* Pointer removed - the pulse handles the focus now */}
-                    </div>
-                </div>
+                <OnboardingOverlay
+                    isLeagueMode={isLeagueMode}
+                    onDismiss={() => handleStartSession('DISMISS')}
+                />
             )}
 
-            <header className="dashboard-header" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                    <h2 style={{ margin: 0, fontWeight: '900' }}>Welcome, {user ? user.displayName.split(' ')[0] : 'Golfer'}</h2>
-                    <div
-                        className={`streak-pill ${streak > 0 ? 'active' : 'inactive'}`}
+            <header className="dashboard-header">
+                <div className="header-left">
+                    <h2>Welcome, {user ? user.displayName.split(' ')[0] : 'Golfer'}</h2>
+                    <StreakPill
+                        streak={streak}
+                        milestone={streakMilestone}
                         onClick={() => setShowStreakModal(true)}
-                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    >
-                        {/* UPDATED: removed margin-top: 5px */}
-                        <span className="streak-pill-icon" style={{ display: 'flex' }}>
-                            {streak > 0 ? (
-                                <Flame size={16} color="#f97316" fill="#f97316" />
-                            ) : (
-                                streakMilestone?.title === 'Day One' ? <Zap size={16} color="#eab308" fill="#eab308" /> : <Snowflake size={16} color="#3b82f6" />
-                            )}
-                        </span>
-                        <span className="streak-pill-val" style={{ fontWeight: '800', paddingTop: '2px' }}>{streak}</span>
-                    </div>
+                    />
                 </div>
             </header>
 
-            <div className="streak-milestone-banner" style={{ width: '100%', marginBottom: '20px', textAlign: 'center' }}>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#6b7280', fontStyle: 'italic', fontWeight: '500' }}>
-                    {streakMilestone?.msg}
-                </p>
+            <div className="streak-milestone-banner">
+                <p>{streakMilestone?.msg}</p>
             </div>
 
-            {/* UPDATE THIS SECTION IN Dashboard.jsx */}
-            <div
-                /* ADD THIS DYNAMIC CLASS NAME HERE */
-                className={`dashboard-action-grid ${showOnboarding ? 'onboarding-active' : ''}`}
-                style={{
-                    ...(isLeagueMode
-                        ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%', marginBottom: '20px' }
-                        : { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginBottom: '20px' }
-                    ),
-                    position: showOnboarding ? 'relative' : 'static',
-                    zIndex: showOnboarding ? 3100 : 'auto',
-                    /* CHANGE THIS TO 'auto' so clicks work through the overlay holes */
-                    pointerEvents: 'auto'
-                }}
-            >
-                {isLeagueMode && (
-                    <button className="action-card league action-btn-league" onClick={() => handleStartSession('LEAGUE')} style={{
-                        width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '12px'
-                    }}>
-                        <Trophy size={24} color="#ffffff" strokeWidth={2} />
-                        <div className="action-btn-text" style={{ textAlign: 'left' }}>
-                            <strong style={{ display: 'block', fontSize: '0.9rem' }}>Start League</strong>
-                            <div className="action-btn-sub" style={{ fontSize: '0.7rem', opacity: 0.9 }}>League Night</div>
-                        </div>
-                    </button>
-                )}
+            <ActionGrid
+                isLeagueMode={isLeagueMode}
+                userRole={userRole}
+                showOnboarding={showOnboarding}
+                onStartSession={handleStartSession}
+            />
 
-                <button className="action-card secondary action-btn-practice" onClick={() => handleStartSession('PRACTICE')}
-                    style={{
-                        width: userRole === 'practice' ? '65%' : '100%',
-                        minWidth: userRole === 'practice' ? '220px' : '0',
-                        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '12px'
-                    }}>
-                    <Target size={24} color="#000000" strokeWidth={2} />
-                    <div className="action-btn-text" style={{ textAlign: 'left' }}>
-                        <strong style={{ display: 'block', fontSize: '0.9rem' }}>Start Practice</strong>
-                        <div className="action-btn-sub" style={{ fontSize: '0.7rem', opacity: 0.9 }}>{isLeagueMode ? 'On Your Own' : 'Free Play'}</div>
-                    </div>
-                </button>
-            </div>
-
+            {/* TRENDS TOGGLE - Restoring explicit center */}
             {hasHistoryData && (
                 <>
-                    <div className="trends-toggle-container" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '20px' }}>
+                    <div className="trends-toggle-container" style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        width: '100%',
+                        marginBottom: '20px'
+                    }}>
                         <button className="trends-toggle-btn" onClick={() => setShowStats(!showStats)}>
                             {showStats ? 'Hide Trends ▲' : 'View Trends ▼'}
                         </button>
                     </div>
+
                     {showStats && <Trends history={history} userRole={userRole} />}
 
                     <h3 className="section-title">Recent Activity</h3>
 
-                    <div className="activity-filters" style={{ display: 'flex', gap: '8px', overflowX: 'auto', marginBottom: '15px', paddingBottom: '5px', scrollbarWidth: 'none' }}>
-                        {['ALL', 'PRACTICE', 'WORLD', 'LEAGUE'].map(f => (
-                            <button
-                                key={f}
-                                onClick={() => { setActiveFilter(f); setShowAllHistory(false); }}
-                                style={{
-                                    padding: '6px 14px', borderRadius: '20px', border: 'none',
-                                    background: activeFilter === f ? 'var(--primary, #3b82f6)' : '#f3f4f6',
-                                    color: activeFilter === f ? '#ffffff' : '#6b7280',
-                                    fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', whiteSpace: 'nowrap'
-                                }}
-                            >
-                                {f === 'WORLD' ? 'AROUND THE WORLD' : f}
-                            </button>
-                        ))}
+                    <div className="activity-filters-wrapper" style={{
+                        width: '100%',
+                        overflow: 'hidden',
+                        marginBottom: '15px'
+                    }}>
+                        <div className="activity-filters" style={{
+                            display: 'flex',
+                            justifyContent: 'flex-start', // Anchors to the left so scrolling works
+                            gap: '12px',
+                            overflowX: 'auto',
+                            padding: '10px 20px', // Adds "breathing room" on both sides
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                            WebkitOverflowScrolling: 'touch' // Smooth scroll for iOS
+                        }}>
+                            {['ALL', 'PRACTICE', 'WORLD', 'LEAGUE'].map(f => (
+                                <button
+                                    key={f}
+                                    onClick={() => { setActiveFilter(f); setShowAllHistory(false); }}
+                                    style={{
+                                        padding: '8px 18px',
+                                        borderRadius: '20px',
+                                        border: 'none',
+                                        background: activeFilter === f ? 'var(--primary, #3b82f6)' : '#f3f4f6',
+                                        color: activeFilter === f ? '#ffffff' : '#6b7280',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '800',
+                                        cursor: 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0, // CRITICAL: prevents the pills from squishing
+                                        boxShadow: activeFilter === f ? '0 4px 12px rgba(59, 130, 246, 0.3)' : 'none'
+                                    }}
+                                >
+                                    {f === 'WORLD' ? 'AROUND THE WORLD' : f}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-
                     <ActivityList
                         displayedHistory={displayedHistory}
                         expandedSession={expandedSession}
@@ -186,22 +161,22 @@ export default function Dashboard({
                         onManualMerge={onManualMerge}
                     />
 
-                    {/* UPDATED: 65% width, centered, no border */}
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                    {/* VIEW ALL HISTORY - Restoring 65% width and styling */}
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '15px' }}>
                         {filteredHistory.length > 5 && (
                             <button
                                 className="secondary-btn"
                                 onClick={() => setShowAllHistory(!showAllHistory)}
                                 style={{
                                     width: '65%',
-                                    marginTop: '15px',
                                     padding: '15px',
-                                    background: '#f3f4f6',
+                                    background: '#f3f4f6', // Muted gray background
                                     border: 'none',
                                     borderRadius: '12px',
-                                    color: '#6b7280',
+                                    color: '#6b7280', // Text color matching your theme
                                     fontWeight: '800',
-                                    fontSize: '0.85rem'
+                                    fontSize: '0.85rem',
+                                    cursor: 'pointer'
                                 }}
                             >
                                 {showAllHistory ? 'Collapse History ▲' : `View All History (${filteredHistory.length}) ▼`}
@@ -212,12 +187,10 @@ export default function Dashboard({
             )}
 
             {!hasHistoryData && (
-                <div style={{ textAlign: 'center', marginTop: '40px', opacity: 0.4, padding: '0 20px' }}>
-                    <p style={{ fontSize: '0.9rem' }}>Log your first session to unlock trends and history tracking.</p>
+                <div className="empty-history">
+                    <p>Log your first session to unlock trends and history tracking.</p>
                 </div>
             )}
-
-
 
             <SettingsModal
                 isOpen={showSettings}

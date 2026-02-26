@@ -1,9 +1,11 @@
+/* Update Dashboard.css */
 .dashboard-header {
     display: flex;
+    justify-content: center;
+    /* Restore centering */
     align-items: center;
-    justify-content: space-between;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .header-left {
