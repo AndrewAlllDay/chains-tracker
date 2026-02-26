@@ -352,7 +352,7 @@ function App() {
             <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>
               You already practiced today. Would you like to combine this session?
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <button className="save-btn" onClick={() => handleMergeSession(pendingSession.existing, pendingSession.new)}>Combine Sessions</button>
               <button onClick={() => { saveHistoryToStorage(pendingSession.new); setPendingSession(null); setView('HOME'); }} className="secondary-btn">Save Separately</button>
             </div>
@@ -371,7 +371,7 @@ function App() {
               )}
             </h3>
             <p style={{ marginBottom: '25px', fontSize: '1.1rem', lineHeight: '1.5' }}>{alertState.message}</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <button onClick={() => { alertState.onConfirm(); closeAlert(); }} className={!alertState.isModeSelection ? "save-btn" : "secondary-btn"}>{alertState.confirmText}</button>
               <button onClick={() => { if (alertState.onSecondary) alertState.onSecondary(); closeAlert(); }} className="secondary-btn">{alertState.secondaryText}</button>
             </div>
