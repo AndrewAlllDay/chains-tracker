@@ -114,15 +114,12 @@ function App() {
 
   // --- HELPERS ---
 
-  // FIX: Ensure settings are merged correctly into the user document
   const updateSettings = async (newSettings) => {
-    // Merge locally first for instant UI response
     const updated = { ...userSettings, ...newSettings };
     setUserSettings(updated);
 
     if (user) {
       try {
-        // We use merge: true to update the "settings" map inside the user doc
         await setDoc(doc(db, "users", user.uid), {
           settings: updated
         }, { merge: true });
@@ -266,22 +263,30 @@ function App() {
     <div className="container">
       {view === 'HOME' && (
         <header style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', marginBottom: '15px' }}>
-          <div style={{ position: 'absolute', left: '0', top: '10px', zIndex: 2 }}>
-            <button onClick={() => setShowGuideModal(true)} className="secondary-btn" style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: '600' }}>
-              Guide
-            </button>
-          </div>
+
+          {/* Only show secondary navigation if role is selected */}
+          {!needsRoleSelection && (
+            <div style={{ position: 'absolute', left: '0', top: '10px', zIndex: 2 }}>
+              <button onClick={() => setShowGuideModal(true)} className="secondary-btn" style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: '600' }}>
+                Guide
+              </button>
+            </div>
+          )}
+
           <div style={{ width: '150px', zIndex: 1, marginTop: '10px' }}>
             <img src={logoIcon} alt="DIALED Logo" style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
-          <div style={{ position: 'absolute', right: '0', top: '10px', zIndex: 2 }}>
-            <button
-              onClick={() => setShowSettings(true)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', opacity: 0.6 }}
-            >
-              <Settings size={24} strokeWidth={2.5} color="#6b7280" />
-            </button>
-          </div>
+
+          {!needsRoleSelection && (
+            <div style={{ position: 'absolute', right: '0', top: '10px', zIndex: 2 }}>
+              <button
+                onClick={() => setShowSettings(true)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', opacity: 0.6 }}
+              >
+                <Settings size={24} strokeWidth={2.5} color="#6b7280" />
+              </button>
+            </div>
+          )}
         </header>
       )}
 
@@ -362,7 +367,6 @@ function App() {
         </>
       )}
 
-      {/* Daily Practice Merge Modal */}
       {pendingSession && (
         <div className="modal-overlay" style={{ zIndex: 4000 }}>
           <div className="modal-content" style={{ textAlign: 'center', maxWidth: '400px' }}>
@@ -381,7 +385,6 @@ function App() {
         </div>
       )}
 
-      {/* Alert / Confirm Modal */}
       {alertState.isOpen && (
         <div className="modal-overlay" onClick={closeAlert} style={{ zIndex: 2000 }}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
