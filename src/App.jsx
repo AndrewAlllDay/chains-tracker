@@ -261,34 +261,6 @@ function App() {
 
   return (
     <div className="container">
-      {view === 'HOME' && (
-        <header style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', marginBottom: '15px' }}>
-
-          {/* Only show secondary navigation if role is selected */}
-          {!needsRoleSelection && (
-            <div style={{ position: 'absolute', left: '0', top: '10px', zIndex: 2 }}>
-              <button onClick={() => setShowGuideModal(true)} className="secondary-btn" style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: '600' }}>
-                Guide
-              </button>
-            </div>
-          )}
-
-          <div style={{ width: '150px', zIndex: 1, marginTop: '10px' }}>
-            <img src={logoIcon} alt="DIALED Logo" style={{ width: '100%', height: 'auto', display: 'block' }} />
-          </div>
-
-          {!needsRoleSelection && (
-            <div style={{ position: 'absolute', right: '0', top: '10px', zIndex: 2 }}>
-              <button
-                onClick={() => setShowSettings(true)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', opacity: 0.6 }}
-              >
-                <Settings size={24} strokeWidth={2.5} color="#6b7280" />
-              </button>
-            </div>
-          )}
-        </header>
-      )}
 
       {needsRoleSelection ? (
         <RoleSelector onSelect={handleRoleSelect} />
@@ -311,6 +283,9 @@ function App() {
               showSettings={showSettings}
               setShowSettings={setShowSettings}
               handleRoleSelect={handleRoleSelect}
+              // NEW: Passing these down so Dashboard can control the complete header
+              setShowGuideModal={setShowGuideModal}
+              logoIcon={logoIcon}
             />
           )}
 

@@ -598,3 +598,104 @@ button:active,
   margin-bottom: 12px;
   letter-spacing: 1px;
 }
+
+/* Dashboard.css */
+
+.tour-highlight-active {
+  position: relative !important;
+  z-index: 5001 !important;
+  background: var(--card-bg) !important;
+  /* Hug the content tightly */
+  padding: inherit;
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 10px 25px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+
+/* Specific fix for the Title to make it look like your pill-style header */
+h3.tour-highlight-active {
+  background: white !important;
+  padding: 10px 30px !important;
+  border-radius: 99px !important;
+  color: var(--primary) !important;
+}
+
+/* Ensure the filter row doesn't have a giant white box background */
+.activity-filters.tour-highlight-active {
+  padding: 8px !important;
+  border-radius: 99px !important;
+}
+
+/* Dashboard.css */
+
+/* Update specific pill shapes for the tour highlights */
+.trends-toggle-btn.tour-highlight-active {
+  background: white !important;
+  border-radius: 50px !important;
+  color: var(--primary) !important;
+  border: 2px solid var(--primary);
+  padding: 10px 30px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Dashboard.css */
+
+.tour-highlight-active {
+  position: relative !important;
+  z-index: 5001 !important;
+  background: var(--card-bg) !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Ensure the pill shape remains perfect during the highlight */
+div.tour-highlight-active {
+  width: fit-content;
+  display: block;
+}
+
+/* Dashboard.css */
+.tour-highlight-active {
+  position: relative !important;
+  z-index: 5001 !important;
+  background: white !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Specific pill shape for header buttons */
+button.tour-highlight-active {
+  border: 2px solid var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+/* Specific override for the Streak Badge highlight */
+.dashboard-header .tour-highlight-active {
+  background: transparent !important;
+  /* Don't add a white box if the pill has its own bg */
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  /* Keeps it tight to the pill's width */
+}
+
+/* Dashboard.css */
+
+/* Special handling for the Dynamic Streak Highlight */
+.header-left .tour-highlight-active {
+  background: transparent !important;
+  /* Use a spread shadow instead of padding to avoid shifting the name text */
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 50px !important;
+  display: inline-flex !important;
+  /* Ensure the highlight doesn't physically push the 'Welcome' text */
+  margin: 0 !important;
+}
+
+/* Ensure the StreakPill inside doesn't change size */
+.header-left .tour-highlight-active .streak-pill {
+  margin: 0 !important;
+}

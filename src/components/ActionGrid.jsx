@@ -7,12 +7,15 @@ export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onS
         : { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginBottom: '20px' };
 
     return (
+        // ActionGrid.jsx
         <div
             className={`dashboard-action-grid ${showOnboarding ? 'onboarding-active' : ''}`}
             style={{
                 ...gridStyle,
-                position: showOnboarding ? 'relative' : 'static',
-                zIndex: showOnboarding ? 3100 : 'auto',
+                position: 'relative',
+                /* We're setting this to 6000 to match the PostSession tour buttons */
+                zIndex: showOnboarding ? 6005 : 1,
+                /* This ensures the clicks actually hit the button and not the overlay */
                 pointerEvents: 'auto'
             }}
         >
