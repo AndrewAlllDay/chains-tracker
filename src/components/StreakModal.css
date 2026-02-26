@@ -1,0 +1,188 @@
+.streak-hero-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.streak-summary-box {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px dashed var(--border);
+    margin-bottom: 10px;
+}
+
+.streak-summary-days {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.streak-summary-label {
+    color: var(--primary-dark);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.timeline-container {
+    margin-bottom: 25px;
+    padding: 0 10px;
+}
+
+.timeline-track {
+    position: relative;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 20px 0 10px 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid var(--card-bg);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.timeline-dot.start {
+    left: 0;
+}
+
+.timeline-dot.end {
+    right: 0;
+}
+
+.timeline-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    opacity: 0.3;
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.stat-grid-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-box-mini {
+    background: var(--bg);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.stat-box-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.stat-box-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.stat-box-value.highlight {
+    color: var(--primary);
+}
+
+.trend-graph-wrapper {
+    padding: 10px 0 30px 0;
+    text-align: left;
+}
+
+.trend-graph-flex {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.trend-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 800;
+    text-align: right;
+    width: 30px;
+}
+
+.trend-chart-area {
+    flex: 1;
+    position: relative;
+    height: 100px;
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.range-breakdown-wrapper {
+    text-align: left;
+}
+
+.range-row {
+    margin-bottom: 12px;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+}
+
+.range-dist {
+    font-weight: 800;
+    color: var(--text);
+}
+
+.range-stats {
+    color: var(--text-muted);
+}
+
+.range-pct {
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.range-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.range-fill {
+    height: 100%;
+    background: var(--primary);
+}
+
+.milestone-msg {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
