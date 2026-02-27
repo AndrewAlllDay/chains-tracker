@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Flame, ChevronDown, Link as LinkIcon, Trash2, Target, Trophy, Globe
 } from 'lucide-react';
 import './ActivityList.css';
 
 const ActivityList = ({ displayedHistory, expandedSession, toggleSession, deleteHistorySession, onManualMerge, tourActive }) => {
-    // FIX: Removed the unused 'expandedSeqId' state to clear ESLint error
+    const [showDetailsId, setShowDetailsId] = useState(null);
+
+    const getDotStyle = (made, attempts) => {
+        const pct = (made / attempts) * 100;
+        if (pct >= 70) return { background: '#10b981', border: 'none' };
+        if (pct >= 40) return { background: '#fbbf24', border: 'none' };
+        return { background: '#ef4444', border: 'none' };
+    };
 
     return (
         <ul className="history-list" style={{
@@ -21,6 +28,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                 const isWorld = session.subType === 'WORLD';
                 const isLegacy = session.isLegacy === true;
                 const isHighlighted = tourActive && index < 2;
+                const isDetailsVisible = showDetailsId === session.id;
 
                 let perfectRounds = 0;
                 if (!isLeague && session.rounds) {
@@ -52,6 +60,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                         onClick={() => {
                             if (tourActive) return;
                             toggleSession(session.id);
+                            if (isExpanded) setShowDetailsId(null);
                         }}
                         className={cardClass}
                         style={{
@@ -98,8 +107,77 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
 
                         {isExpanded && (
                             <div className="activity-expanded">
-                                {session.rounds && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(55px, 1fr))', gap: '10px', marginTop: '12px', padding: '12px', background: '#f9fafb', borderRadius: '8px' }}>
+
+                                {/* 1. DISTANCE RATIO BREAKDOWN (Always visible when expanded) */}
+                                {!isLeague && !isWorld && session.rounds && (
+                                    <div className="dist-summary" style={{ marginBottom: '20px' }}>
+                                        <div className="activity-section-title">Distance Accuracy</div>
+                                        {/* Logic to group rounds by distance if session has multiple rounds at same distance */}
+                                        {Object.entries(session.rounds.reduce((acc, r) => {
+                                            if (!acc[r.distance]) acc[r.distance] = { made: 0, attempts: 0 };
+                                            acc[r.distance].made += Number(r.made);
+                                            acc[r.distance].attempts += Number(r.attempts);
+                                            return acc;
+                                        }, {})).map(([dist, stats]) => (
+                                            <div key={dist} className="dist-row" style={{ marginBottom: '8px' }}>
+                                                <div className="dist-labels" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                                                    <span className="dist-name" style={{ fontSize: '0.75rem', fontWeight: '800' }}>{dist}ft</span>
+                                                    <span className="dist-frac" style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>{stats.made}/{stats.attempts}</span>
+                                                </div>
+                                                <div className="progress-track" style={{ height: '4px', background: 'var(--bg)', borderRadius: '2px', overflow: 'hidden' }}>
+                                                    <div style={{
+                                                        width: `${(stats.made / stats.attempts) * 100}%`,
+                                                        height: '100%',
+                                                        background: 'linear-gradient(90deg, #fb923c, var(--primary))'
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* 2. ROUND SEQUENCE DOTS (Tier 1) */}
+                                {!isLeague && !isWorld && session.rounds && (
+                                    <div
+                                        className="seq-section"
+                                        style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowDetailsId(isDetailsVisible ? null : session.id);
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                            <span className="activity-section-title" style={{ margin: 0 }}>Round Sequence</span>
+                                            <span style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+                                                {isDetailsVisible ? 'Hide Grid ▲' : 'Tap for Grid ▼'}
+                                            </span>
+                                        </div>
+
+                                        <div className="seq-container" style={{ display: 'flex', gap: '6px', padding: '4px 0', cursor: 'pointer' }}>
+                                            {session.rounds.map((r, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="seq-dot"
+                                                    style={{ width: '12px', height: '12px', borderRadius: '50%', ...getDotStyle(r.made, r.attempts) }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* 3. ROUND GRID (Tier 2 - Slides down) */}
+                                {isDetailsVisible && session.rounds && (
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fill, minmax(55px, 1fr))',
+                                        gap: '10px',
+                                        marginTop: '16px',
+                                        padding: '12px',
+                                        background: '#f9fafb',
+                                        borderRadius: '8px',
+                                        border: '1px solid var(--border)',
+                                        animation: 'fadeIn 0.2s ease'
+                                    }}>
                                         {session.rounds.map((r, i) => (
                                             <div key={i} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
                                                 <span style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>Rd {i + 1}</span>
@@ -109,13 +187,18 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                         ))}
                                     </div>
                                 )}
-                                <div className="activity-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
+
+                                <div className="activity-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px', marginTop: '15px' }}>
                                     {duplicateSession && onManualMerge && (
                                         <button className="secondary-btn" onClick={(e) => { e.stopPropagation(); onManualMerge(duplicateSession, session); }} style={{ width: '100%', background: '#eff6ff', color: '#3b82f6', border: '1px solid #dbeafe', padding: '12px', borderRadius: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                                             <LinkIcon size={16} /> Merge Duplicate Sessions
                                         </button>
                                     )}
-                                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteHistorySession(session.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => { e.stopPropagation(); deleteHistorySession(session.id); }}
+                                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '40%' }}
+                                    >
                                         <Trash2 size={16} /> Delete Session
                                     </button>
                                 </div>

@@ -75,18 +75,24 @@ const AppGuide = ({ isOpen, onClose, userRole }) => {
                 <div className="guide-seq-explainer">
                     <div style={{ marginBottom: '12px' }}>In your standard practice history, colored dots represent your round-by-round accuracy:</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '12px', paddingLeft: '5px' }}>
+                        {/* GREEN: GOOD */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--league)', flexShrink: 0 }} />
-                            <span style={{ fontSize: '0.9rem' }}><strong>Perfect Round</strong> (100%)</span>
+                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#10b981', flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.9rem' }}><strong>Good Performance</strong> (70%+)</span>
                         </div>
+                        {/* YELLOW: STANDARD */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#fed7aa', flexShrink: 0 }} />
-                            <span style={{ fontSize: '0.9rem' }}><strong>Good Round</strong> (50%+)</span>
+                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#fbbf24', flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.9rem' }}><strong>Standard</strong> (40% - 69%)</span>
                         </div>
+                        {/* RED: STRUGGLING */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'var(--bg)', border: '1px solid #d1d5db', flexShrink: 0 }} />
-                            <span style={{ fontSize: '0.9rem' }}><strong>Standard</strong> (&lt; 50%)</span>
+                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#ef4444', flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.9rem' }}><strong>Needs Improvement</strong> (&lt; 40%)</span>
                         </div>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '8px', fontStyle: 'italic' }}>
+                        Tap the dots in your history to toggle the detailed round breakdown.
                     </div>
                 </div>
             )
