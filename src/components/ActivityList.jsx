@@ -176,7 +176,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                         background: '#f9fafb',
                                         borderRadius: '8px',
                                         border: '1px solid var(--border)',
-                                        animation: 'fadeIn 0.2s ease'
+                                        animation: 'slideDownReveal 0.25s ease-out forwards'
                                     }}>
                                         {session.rounds.map((r, i) => (
                                             <div key={i} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column' }}>

@@ -23,6 +23,10 @@ function App() {
   // --- STATE ---
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // NEW: Flag to prevent the app from rendering before Firestore syncs the real data
+  const [isFirestoreSynced, setIsFirestoreSynced] = useState(false);
+
   const [history, setHistory] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [userSettings, setUserSettings] = useState({ scoringStyle: 'PRO', hasCompletedOnboarding: false });
@@ -55,6 +59,7 @@ function App() {
         setHistory([]);
         setUserRole(null);
         setNeedsRoleSelection(false);
+        setIsFirestoreSynced(false); // NEW: Reset the sync flag on logout
       }
     });
     return () => unsubscribe();
@@ -105,8 +110,14 @@ function App() {
           setNeedsRoleSelection(true);
           initialModalCheckDone.current = true;
         }
+
+        // NEW: UNLOCK RENDER. Firestore has returned our true data state.
+        setIsFirestoreSynced(true);
+
       }, (error) => {
         console.error("Firestore sync error:", error);
+        // NEW: Fail-safe so the app doesn't hang infinitely if Firestore fails
+        setIsFirestoreSynced(true);
       });
       return () => unsubscribe();
     }
@@ -256,7 +267,8 @@ function App() {
     }, 'danger');
   }
 
-  if (loading) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  // NEW: Updated loading check to also wait for Firestore to finish its initial sync
+  if (loading || (user && !isFirestoreSynced)) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
   if (!user) return <LoginLanding onLogin={handleLogin} />;
 
   return (
