@@ -108,11 +108,66 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                         {isExpanded && (
                             <div className="activity-expanded">
 
+                                {/* --- LEAGUE MODE EXPANDED VIEW --- */}
+                                {isLeague && (
+                                    <div className="league-breakdown" style={{ marginBottom: '20px' }}>
+                                        {isLegacy || !session.details ? (
+                                            <div style={{ textAlign: 'center', padding: '15px', color: 'var(--text-muted)', fontSize: '0.85rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                                                Legacy session. Detailed round data is unavailable.
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {/* Round Scores Summary */}
+                                                <div className="league-rounds" style={{ display: 'flex', justifyContent: 'space-between', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--border)' }}>
+                                                    {session.roundScores?.map((score, idx) => (
+                                                        <div key={idx} style={{ textAlign: 'center' }}>
+                                                            <div style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>R{idx + 1}</div>
+                                                            <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--league)' }}>{score}</div>
+                                                        </div>
+                                                    ))}
+                                                    <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', paddingLeft: '16px' }}>
+                                                        <div style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>TOTAL</div>
+                                                        <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text)' }}>{session.score}</div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Station Ratio Bars */}
+                                                <div className="activity-section-title" style={{ marginBottom: '10px' }}>Station Accuracy</div>
+                                                {[1, 2, 3, 4, 5].map(station => {
+                                                    const totalMadeAtStation = [1, 2, 3].reduce((acc, round) => {
+                                                        return acc + (session.details[round]?.[station] || 0);
+                                                    }, 0);
+                                                    const maxAttempts = 15; // 3 rounds * 5 putts
+                                                    const pct = (totalMadeAtStation / maxAttempts) * 100;
+
+                                                    return (
+                                                        <div key={station} className="dist-row" style={{ marginBottom: '8px' }}>
+                                                            <div className="dist-labels" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                                                                <span className="dist-name" style={{ fontSize: '0.75rem', fontWeight: '800' }}>
+                                                                    Station {station} <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>({station}pt)</span>
+                                                                </span>
+                                                                <span className="dist-frac" style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>{totalMadeAtStation}/{maxAttempts}</span>
+                                                            </div>
+                                                            <div className="progress-track" style={{ height: '4px', background: 'var(--bg)', borderRadius: '2px', overflow: 'hidden' }}>
+                                                                <div style={{
+                                                                    width: `${pct}%`,
+                                                                    height: '100%',
+                                                                    background: 'var(--league)' // Using League Green for consistency
+                                                                }} />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* --- PRACTICE/WORLD MODE EXPANDED VIEW --- */}
                                 {/* 1. DISTANCE RATIO BREAKDOWN (Always visible when expanded) */}
                                 {!isLeague && !isWorld && session.rounds && (
                                     <div className="dist-summary" style={{ marginBottom: '20px' }}>
                                         <div className="activity-section-title">Distance Accuracy</div>
-                                        {/* Logic to group rounds by distance if session has multiple rounds at same distance */}
                                         {Object.entries(session.rounds.reduce((acc, r) => {
                                             if (!acc[r.distance]) acc[r.distance] = { made: 0, attempts: 0 };
                                             acc[r.distance].made += Number(r.made);
@@ -136,7 +191,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                     </div>
                                 )}
 
-                                {/* 2. ROUND SEQUENCE DOTS (Tier 1) */}
+                                {/* 2. ROUND SEQUENCE DOTS / FLAMES (Tier 1) */}
                                 {!isLeague && !isWorld && session.rounds && (
                                     <div
                                         className="seq-section"
@@ -154,13 +209,25 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                         </div>
 
                                         <div className="seq-container" style={{ display: 'flex', gap: '6px', padding: '4px 0', cursor: 'pointer' }}>
-                                            {session.rounds.map((r, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="seq-dot"
-                                                    style={{ width: '12px', height: '12px', borderRadius: '50%', ...getDotStyle(r.made, r.attempts) }}
-                                                />
-                                            ))}
+                                            {session.rounds.map((r, i) => {
+                                                const pct = Math.round((r.made / r.attempts) * 100);
+
+                                                if (pct === 100) {
+                                                    return (
+                                                        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px' }}>
+                                                            <Flame size={14} color="#f97316" fill="#f97316" />
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return (
+                                                    <div
+                                                        key={i}
+                                                        className="seq-dot"
+                                                        style={{ width: '12px', height: '12px', borderRadius: '50%', ...getDotStyle(r.made, r.attempts) }}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
