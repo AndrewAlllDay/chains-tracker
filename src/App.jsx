@@ -234,7 +234,12 @@ function App() {
       onConfirm: () => setView('SINGLE_SESSION'),
       confirmText: 'Standard',
       onSecondary: () => setView('WORLD_SESSION'),
-      secondaryText: 'Around The World'
+      secondaryText: 'Around The World',
+      // We'll add a third option here. 
+      // Note: If your Alert modal only renders two buttons, 
+      // you might need to update the Alert modal JSX at the bottom of App.js 
+      // to map through an array of buttons instead.
+      onLadder: () => setView('LADDER_SESSION'),
     });
   };
 
