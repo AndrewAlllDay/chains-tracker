@@ -31,9 +31,8 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                 const isDetailsVisible = showDetailsId === session.id;
 
                 let perfectRounds = 0;
-                if (!isLeague && session.rounds) {
+                if (!isLeague && !isWorld && session.rounds) {
                     perfectRounds = session.rounds.filter((r) => {
-                        if (isWorld && (r.distance === 10 || r.distance === '10')) return false;
                         return r.made === r.attempts && r.attempts > 0;
                     }).length;
                 }
@@ -117,7 +116,6 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                             </div>
                                         ) : (
                                             <>
-                                                {/* Round Scores Summary */}
                                                 <div className="league-rounds" style={{ display: 'flex', justifyContent: 'space-between', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--border)' }}>
                                                     {session.roundScores?.map((score, idx) => (
                                                         <div key={idx} style={{ textAlign: 'center' }}>
@@ -131,13 +129,13 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                                     </div>
                                                 </div>
 
-                                                {/* Station Ratio Bars */}
                                                 <div className="activity-section-title" style={{ marginBottom: '10px' }}>Station Accuracy</div>
                                                 {[1, 2, 3, 4, 5].map(station => {
                                                     const totalMadeAtStation = [1, 2, 3].reduce((acc, round) => {
-                                                        return acc + (session.details[round]?.[station] || 0);
+                                                        const made = session.details?.[round]?.[station] || 0;
+                                                        return acc + made;
                                                     }, 0);
-                                                    const maxAttempts = 15; // 3 rounds * 5 putts
+                                                    const maxAttempts = 15;
                                                     const pct = (totalMadeAtStation / maxAttempts) * 100;
 
                                                     return (
@@ -152,7 +150,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                                                 <div style={{
                                                                     width: `${pct}%`,
                                                                     height: '100%',
-                                                                    background: 'var(--league)' // Using League Green for consistency
+                                                                    background: 'var(--league)'
                                                                 }} />
                                                             </div>
                                                         </div>
@@ -163,8 +161,120 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                     </div>
                                 )}
 
-                                {/* --- PRACTICE/WORLD MODE EXPANDED VIEW --- */}
-                                {/* 1. DISTANCE RATIO BREAKDOWN (Always visible when expanded) */}
+                                {/* --- AROUND THE WORLD MODE EXPANDED VIEW (SUBWAY MAP) --- */}
+                                {isWorld && session.rounds && (
+                                    <div className="world-breakdown" style={{ marginBottom: '20px' }}>
+                                        <div className="activity-section-title" style={{ marginBottom: '10px' }}>Journey Map</div>
+
+                                        <div className="journey-map-wrapper" style={{
+                                            background: '#f8fafc',
+                                            borderRadius: '12px',
+                                            border: '1px solid var(--border)',
+                                            padding: '40px 15px 20px 15px',
+                                            display: 'flex',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                                                {Array.from({ length: Math.ceil(session.rounds.length / 5) }).map((_, chunkIndex) => {
+                                                    const chunkSize = 5;
+                                                    // Flipped logic: Start with 10ft (story mode)
+                                                    const roundsInOrder = [...session.rounds].reverse();
+                                                    const chunk = roundsInOrder.slice(chunkIndex * chunkSize, chunkIndex * chunkSize + chunkSize);
+                                                    const isEven = chunkIndex % 2 === 0;
+                                                    const isLastChunk = chunkIndex === Math.ceil(session.rounds.length / 5) - 1;
+
+                                                    return (
+                                                        <div key={chunkIndex} style={{
+                                                            display: 'flex',
+                                                            flexDirection: isEven ? 'row' : 'row-reverse',
+                                                            justifyContent: 'flex-start',
+                                                            /* Margin applied to ROW, not line */
+                                                            marginBottom: isLastChunk ? '0' : '55px',
+                                                            position: 'relative'
+                                                        }}>
+                                                            {chunk.map((r, i) => {
+                                                                const actualIndex = chunkIndex * chunkSize + i;
+                                                                const isPerfect = r.made === r.attempts && r.attempts > 0;
+                                                                const isAbsoluteLast = actualIndex === roundsInOrder.length - 1;
+                                                                const isLastInChunk = i === chunk.length - 1;
+
+                                                                return (
+                                                                    <div key={actualIndex} style={{ display: 'flex', flexDirection: isEven ? 'row' : 'row-reverse', alignItems: 'center', position: 'relative' }}>
+
+                                                                        {/* Station Node Wrapper */}
+                                                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', minWidth: '45px', zIndex: 2 }}>
+                                                                            <div style={{
+                                                                                width: '28px',
+                                                                                height: '28px',
+                                                                                borderRadius: '50%',
+                                                                                background: isPerfect ? '#3b82f6' : '#f8fafc',
+                                                                                border: '2px solid #3b82f6',
+                                                                                display: 'flex',
+                                                                                justifyContent: 'center',
+                                                                                alignItems: 'center',
+                                                                                color: isPerfect ? '#ffffff' : '#3b82f6',
+                                                                                fontSize: '0.75rem',
+                                                                                fontWeight: '900',
+                                                                                boxShadow: isPerfect ? '0 0 8px rgba(59, 130, 246, 0.4)' : 'none',
+                                                                                position: 'relative'
+                                                                            }}>
+                                                                                {r.distance}
+
+                                                                                {/* Vertical Line Fix: Centered & no bottom margin */}
+                                                                                {isLastInChunk && !isAbsoluteLast && (
+                                                                                    <div style={{
+                                                                                        position: 'absolute',
+                                                                                        top: '14px',
+                                                                                        left: '50%',
+                                                                                        width: '3px',
+                                                                                        height: '83px',
+                                                                                        background: '#bfdbfe',
+                                                                                        zIndex: -1,
+                                                                                        transform: 'translateX(-50%)'
+                                                                                    }} />
+                                                                                )}
+                                                                            </div>
+
+                                                                            <span style={{
+                                                                                fontSize: '0.65rem',
+                                                                                color: '#94a3b8',
+                                                                                fontWeight: '700',
+                                                                                marginTop: '6px',
+                                                                                background: '#f8fafc',
+                                                                                padding: '2px 4px',
+                                                                                borderRadius: '4px'
+                                                                            }}>
+                                                                                {r.made}/{r.attempts}
+                                                                            </span>
+                                                                        </div>
+
+                                                                        {/* Horizontal Line Fix: Centered & no bottom margin */}
+                                                                        {!isLastInChunk && !isAbsoluteLast && (
+                                                                            <div style={{
+                                                                                width: '35px',
+                                                                                height: '3px',
+                                                                                background: '#bfdbfe',
+                                                                                zIndex: 1,
+                                                                                margin: '0 -2px',
+                                                                                marginBottom: '20px',
+                                                                            }} />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div style={{ textAlign: 'right', marginTop: '12px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-muted)' }}>
+                                            Total Rounds: {session.rounds.length}
+                                        </div>
+                                    </div>
+                                )}
+
+
+                                {/* --- PRACTICE MODE EXPANDED VIEW --- */}
                                 {!isLeague && !isWorld && session.rounds && (
                                     <div className="dist-summary" style={{ marginBottom: '20px' }}>
                                         <div className="activity-section-title">Distance Accuracy</div>
@@ -191,7 +301,6 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                     </div>
                                 )}
 
-                                {/* 2. ROUND SEQUENCE DOTS / FLAMES (Tier 1) */}
                                 {!isLeague && !isWorld && session.rounds && (
                                     <div
                                         className="seq-section"
@@ -232,8 +341,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                     </div>
                                 )}
 
-                                {/* 3. ROUND GRID (Tier 2 - Slides down) */}
-                                {isDetailsVisible && session.rounds && (
+                                {!isLeague && !isWorld && session.rounds && isDetailsVisible && (
                                     <div style={{
                                         display: 'grid',
                                         gridTemplateColumns: 'repeat(auto-fill, minmax(55px, 1fr))',
