@@ -157,7 +157,7 @@ export default function StandardMode({ scoringStyle, onLogRound, roundCount, onF
                 </div>
             )}
 
-            {/* ROUND STATS DISPLAY - Only shows after first round is submitted */}
+            {/* ROUND STATS DISPLAY */}
             {roundCount > 0 && (
                 <div style={{
                     marginBottom: '15px',
@@ -175,32 +175,39 @@ export default function StandardMode({ scoringStyle, onLogRound, roundCount, onF
                 </div>
             )}
 
-            {/* ACTION BUTTONS */}
-            <button
-                type="button"
-                className="save-btn"
-                onClick={handleLogClick}
-                style={{
-                    backgroundColor: 'var(--primary)',
-                    width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none', marginBottom: '10px'
-                }}
-            >
-                LOG ROUND
-            </button>
-
-            {roundCount > 0 && (
+            {/* ACTION BUTTONS GRID */}
+            <div style={{
+                width: '100%',
+                display: 'grid',
+                gridTemplateColumns: roundCount > 0 ? '1fr 1fr' : '1fr',
+                gap: '10px'
+            }}>
                 <button
                     type="button"
-                    onClick={onFinish}
+                    className="save-btn"
+                    onClick={handleLogClick}
                     style={{
-                        backgroundColor: '#111827', color: '#ffffff',
-                        padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
-                        fontWeight: '800', textTransform: 'uppercase', width: '100%', border: 'none', outline: 'none'
+                        backgroundColor: 'var(--primary)',
+                        width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none'
                     }}
                 >
-                    FINISH SESSION
+                    LOG ROUND
                 </button>
-            )}
+
+                {roundCount > 0 && (
+                    <button
+                        type="button"
+                        onClick={onFinish}
+                        style={{
+                            backgroundColor: '#111827', color: '#ffffff',
+                            padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
+                            fontWeight: '800', textTransform: 'uppercase', width: '100%', border: 'none', outline: 'none'
+                        }}
+                    >
+                        FINISH
+                    </button>
+                )}
+            </div>
         </div>
     );
 }
