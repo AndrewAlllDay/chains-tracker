@@ -30,7 +30,7 @@
 }
 
 .streak-pill.active {
-    background: #fff7ed;
+    background: var(--card-bg);
     border-color: #ffedd5;
 }
 
