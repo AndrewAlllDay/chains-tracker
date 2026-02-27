@@ -11,21 +11,22 @@ const WORLD_RULES = {
     50: { pass: 1, push: 1, label: "1/5 to Finish" }
 };
 
-export default function AroundTheWorld({ onLogRound }) {
+// Haptic helper matching your other modes
+const triggerHaptic = (pattern) => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
+};
+
+export default function AroundTheWorld({ onLogRound, roundCount, onFinish }) {
     const [distance, setDistance] = useState(10);
     const [highestUnlocked, setHighestUnlocked] = useState(10);
-
-    // Tracks which unlock screen to show (null, 40, 50, or 'VICTORY')
     const [activeUnlock, setActiveUnlock] = useState(null);
     const [isGameComplete, setIsGameComplete] = useState(false);
-
-    // REMOVED: puttSequence state as we are forcing SIMPLE mode
     const [simpleMade, setSimpleMade] = useState(0);
 
     const allStations = [10, 15, 20, 25, 30, 33, 40, 50];
     const currentStationIndex = allStations.indexOf(distance);
-
-    // ALWAYS uses simpleMade regardless of what parent props say
     const currentMadeCount = simpleMade;
 
     const handleSimpleAdjust = (amount) => {
@@ -40,22 +41,20 @@ export default function AroundTheWorld({ onLogRound }) {
     const handleLogClick = (e) => {
         if (e) e.preventDefault();
 
+        triggerHaptic([50, 50, 50]);
+
         const newRound = {
             id: Date.now(),
             distance,
             made: currentMadeCount,
             attempts: 5,
-            puttSequence: [], // Forced empty for simple mode
+            puttSequence: [],
             firstPuttMade: false
         };
 
-        // Send data up to orchestrator
         onLogRound(newRound);
-
-        // Reset local inputs
         setSimpleMade(0);
 
-        // Run progression logic
         const rules = WORLD_RULES[distance];
         let nextDistance = distance;
 
@@ -77,8 +76,7 @@ export default function AroundTheWorld({ onLogRound }) {
 
         if (distance === 33 && nextDistance === 40 && highestUnlocked < 40) {
             setActiveUnlock(40);
-        }
-        else if (distance === 40 && nextDistance === 50 && highestUnlocked < 50) {
+        } else if (distance === 40 && nextDistance === 50 && highestUnlocked < 50) {
             setActiveUnlock(50);
         }
 
@@ -90,7 +88,6 @@ export default function AroundTheWorld({ onLogRound }) {
 
     return (
         <div className="card input-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '15px' }}>
-
             <style>
                 {`
                 @keyframes atw-pulse {
@@ -104,7 +101,6 @@ export default function AroundTheWorld({ onLogRound }) {
                 `}
             </style>
 
-            {/* FULL SCREEN CELEBRATION MODAL */}
             {activeUnlock && (
                 <div style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
@@ -145,11 +141,9 @@ export default function AroundTheWorld({ onLogRound }) {
                 </div>
             )}
 
-            {/* 360-DEGREE ORBITAL PROGRESS TRACK */}
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
                 <svg width="100%" height="auto" viewBox="0 0 300 300" style={{ maxWidth: '320px', overflow: 'visible' }}>
                     <text x="150" y="150" fontSize="19" textAnchor="middle" dominantBaseline="middle">🗑️</text>
-
                     {[20, 33].map(st => {
                         const radius = 35 + ((st - 10) / 40) * 90;
                         return (
@@ -165,16 +159,12 @@ export default function AroundTheWorld({ onLogRound }) {
                     {allStations.map((st, idx) => {
                         if (st === 40 && highestUnlocked < 40) return null;
                         if (st === 50 && highestUnlocked < 50) return null;
-
                         const isPassed = currentStationIndex > idx;
                         const isActive = currentStationIndex === idx;
-
                         const radius = 35 + ((st - 10) / 40) * 90;
                         const theta = (idx * (Math.PI * 2) / 8) - (Math.PI / 2);
-
                         const cx = 150 + radius * Math.cos(theta);
                         const cy = 150 + radius * Math.sin(theta);
-
                         let fill = 'white';
                         let stroke = 'var(--border)';
                         let strokeWidth = 2;
@@ -224,7 +214,6 @@ export default function AroundTheWorld({ onLogRound }) {
                 </svg>
             </div>
 
-            {/* HEADER SECTION */}
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                 <div style={{ fontSize: '3.2rem', fontWeight: '900', color: distance >= 40 ? '#3b82f6' : 'var(--primary)', lineHeight: '1' }}>
                     {distance}<span style={{ fontSize: '1.2rem', marginLeft: '6px', opacity: 0.6 }}>FT</span>
@@ -244,16 +233,27 @@ export default function AroundTheWorld({ onLogRound }) {
                 )}
             </div>
 
-            {/* DYNAMIC SCORING INPUT / GAME OVER STATE */}
             {isGameComplete ? (
-                <div style={{ textAlign: 'center', padding: '30px 20px', backgroundColor: 'var(--league-light)', borderRadius: '16px', border: '2px solid var(--league)', color: 'var(--league-dark)', width: '100%', marginBottom: '15px' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🌟</div>
-                    <div style={{ fontWeight: '900', fontSize: '1.4rem', marginBottom: '5px' }}>CHALLENGE COMPLETE</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '600', opacity: 0.8 }}>Click "Finish Session" below to save your stats.</div>
+                <div style={{ width: '100%' }}>
+                    <div style={{ textAlign: 'center', padding: '30px 20px', backgroundColor: 'var(--league-light)', borderRadius: '16px', border: '2px solid var(--league)', color: 'var(--league-dark)', width: '100%', marginBottom: '15px' }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🌟</div>
+                        <div style={{ fontWeight: '900', fontSize: '1.4rem', marginBottom: '5px' }}>CHALLENGE COMPLETE</div>
+                        <div style={{ fontSize: '0.9rem', fontWeight: '600', opacity: 0.8 }}>Session saved. Finish to exit.</div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onFinish}
+                        style={{
+                            backgroundColor: '#111827', color: '#ffffff',
+                            width: '100%', padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
+                            fontWeight: '800', textTransform: 'uppercase', border: 'none', outline: 'none'
+                        }}
+                    >
+                        FINISH SESSION
+                    </button>
                 </div>
             ) : (
                 <>
-                    {/* ALWAYS SHOW SIMPLE ADJUSTMENT UI */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '35px', marginTop: '10px' }}>
                         <button
                             onClick={() => handleSimpleAdjust(-1)}
@@ -292,22 +292,43 @@ export default function AroundTheWorld({ onLogRound }) {
                         </button>
                     </div>
 
-                    <div style={{ marginBottom: '15px', fontWeight: '900', fontSize: '1.1rem' }}>
-                        <span style={{ color: 'var(--text-muted)' }}>SCORE: </span>
-                        <span style={{ color: 'var(--text)' }}>{currentMadeCount} / 5</span>
+                    <div style={{ marginBottom: '15px', fontWeight: '900', fontSize: '1.1rem', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+
+
                     </div>
 
-                    <button
-                        type="button"
-                        className="save-btn"
-                        onClick={handleLogClick}
-                        style={{
-                            backgroundColor: distance >= 40 ? '#3b82f6' : 'var(--primary)',
-                            width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none'
-                        }}
-                    >
-                        LOG & ADVANCE
-                    </button>
+                    <div style={{
+                        width: '100%',
+                        display: 'grid',
+                        gridTemplateColumns: roundCount > 0 ? '1fr 1fr' : '1fr',
+                        gap: '10px'
+                    }}>
+                        <button
+                            type="button"
+                            className="save-btn"
+                            onClick={handleLogClick}
+                            style={{
+                                backgroundColor: distance >= 40 ? '#3b82f6' : 'var(--primary)',
+                                width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none'
+                            }}
+                        >
+                            LOG
+                        </button>
+
+                        {roundCount > 0 && (
+                            <button
+                                type="button"
+                                onClick={onFinish}
+                                style={{
+                                    backgroundColor: '#111827', color: '#ffffff',
+                                    width: '100%', padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
+                                    fontWeight: '800', textTransform: 'uppercase', border: 'none', outline: 'none'
+                                }}
+                            >
+                                FINISH
+                            </button>
+                        )}
+                    </div>
                 </>
             )}
         </div>

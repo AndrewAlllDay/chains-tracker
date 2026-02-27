@@ -40,8 +40,11 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
             {/* ROUTE TO THE CORRECT GAME MODE */}
             {mode === 'WORLD' ? (
                 <AroundTheWorld
+                    // FORCED: Always use SIMPLE scoring for Around the World
                     scoringStyle="SIMPLE"
                     onLogRound={handleLogRound}
+                    roundCount={sessionRounds.length} // Added roundCount prop
+                    onFinish={handleFinishSession}   // Added onFinish prop
                 />
             ) : (
                 <StandardMode
