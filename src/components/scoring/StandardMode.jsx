@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
-export default function StandardMode({ scoringStyle, onLogRound }) {
+// Haptic feedback helper from League mode
+const triggerHaptic = (pattern) => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
+};
+
+export default function StandardMode({ scoringStyle, onLogRound, roundCount, onFinish }) {
     const [distance, setDistance] = useState(20);
     const [puttSequence, setPuttSequence] = useState([false, false, false, false, false]);
     const [simpleMade, setSimpleMade] = useState(0);
@@ -28,6 +35,9 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
     const handleLogClick = (e) => {
         if (e) e.preventDefault();
 
+        // Trigger the "Success" haptic pattern from League mode
+        triggerHaptic([50, 50, 50]);
+
         const newRound = {
             id: Date.now(),
             distance,
@@ -37,10 +47,7 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
             firstPuttMade: isPro ? puttSequence[0] : false
         };
 
-        // Send data up to orchestrator
         onLogRound(newRound);
-
-        // Reset local inputs for the next round
         setPuttSequence([false, false, false, false, false]);
         setSimpleMade(0);
     };
@@ -55,21 +62,11 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
                         value={distance}
                         onChange={(e) => setDistance(Number(e.target.value))}
                         style={{
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            backgroundImage: 'none',
-                            backgroundColor: '#f3f4f6',
-                            border: 'none',
-                            borderRadius: '16px',
-                            padding: '6px 28px 6px 14px',
-                            fontSize: '0.75rem',
-                            fontWeight: '800',
-                            color: 'var(--text-muted)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px'
+                            appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+                            backgroundImage: 'none', backgroundColor: '#f3f4f6', border: 'none',
+                            borderRadius: '16px', padding: '6px 28px 6px 14px', fontSize: '0.75rem',
+                            fontWeight: '800', color: 'var(--text-muted)', cursor: 'pointer',
+                            outline: 'none', textTransform: 'uppercase', letterSpacing: '1px'
                         }}
                     >
                         {allStations.map(st => (
@@ -84,7 +81,6 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
                     </div>
                 </div>
 
-                {/* MASSIVE DISTANCE NUMBER */}
                 <div style={{ fontSize: '3.2rem', fontWeight: '900', color: 'var(--primary)', lineHeight: '1' }}>
                     {distance}<span style={{ fontSize: '1.2rem', marginLeft: '6px', opacity: 0.6 }}>FT</span>
                 </div>
@@ -130,8 +126,7 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
                         onClick={() => handleSimpleAdjust(-1)}
                         style={{
                             width: '70px', height: '70px', flexShrink: 0, padding: 0,
-                            borderRadius: '16px', border: 'none',
-                            background: '#fee2e2', color: '#dc2626',
+                            borderRadius: '16px', border: 'none', background: '#fee2e2', color: '#dc2626',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                             opacity: simpleMade === 0 ? 0.4 : 1, outline: 'none', transition: 'all 0.1s'
                         }}
@@ -141,18 +136,16 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                     </button>
-                    <div style={{ fontSize: '4.5rem', fontWeight: '900', width: '80px', textAlign: 'center', color: 'var(--text)', transition: 'color 0.2s' }}>
+                    <div style={{ fontSize: '4.5rem', fontWeight: '900', width: '80px', textAlign: 'center', color: 'var(--text)' }}>
                         {simpleMade}
                     </div>
                     <button
                         onClick={() => handleSimpleAdjust(1)}
                         style={{
                             width: '70px', height: '70px', flexShrink: 0, padding: 0,
-                            borderRadius: '16px', border: 'none',
-                            background: '#dcfce7', color: '#16a34a',
+                            borderRadius: '16px', border: 'none', background: '#dcfce7', color: '#16a34a',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                            opacity: simpleMade === 5 ? 0.4 : 1,
-                            outline: 'none', transition: 'all 0.1s'
+                            opacity: simpleMade === 5 ? 0.4 : 1, outline: 'none', transition: 'all 0.1s'
                         }}
                         disabled={simpleMade === 5}
                     >
@@ -164,22 +157,50 @@ export default function StandardMode({ scoringStyle, onLogRound }) {
                 </div>
             )}
 
-            <div style={{ marginBottom: '15px', fontWeight: '900', fontSize: '1.1rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>SCORE: </span>
-                <span style={{ color: 'var(--text)' }}>{currentMadeCount} / 5</span>
+            {/* ROUND STATS DISPLAY */}
+            <div style={{
+                marginBottom: '15px',
+                fontWeight: '900',
+                fontSize: '1.1rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%'
+            }}>
+                <div>
+                    <span style={{ color: 'var(--text-muted)' }}>ROUND: </span>
+                    {roundCount + 1}
+                </div>
+                <div style={{ color: 'var(--primary)' }}>
+
+                </div>
             </div>
 
+            {/* ACTION BUTTONS */}
             <button
                 type="button"
                 className="save-btn"
                 onClick={handleLogClick}
                 style={{
                     backgroundColor: 'var(--primary)',
-                    width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none'
+                    width: '100%', padding: '20px', fontSize: '1.2rem', outline: 'none', border: 'none', marginBottom: '10px'
                 }}
             >
                 LOG ROUND
             </button>
+
+            {roundCount > 0 && (
+                <button
+                    type="button"
+                    onClick={onFinish}
+                    style={{
+                        backgroundColor: '#111827', color: '#ffffff',
+                        padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
+                        fontWeight: '800', textTransform: 'uppercase', width: '100%', border: 'none', outline: 'none'
+                    }}
+                >
+                    FINISH SESSION
+                </button>
+            )}
         </div>
     );
 }

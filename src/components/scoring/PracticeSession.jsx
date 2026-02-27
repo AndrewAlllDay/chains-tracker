@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Flame } from 'lucide-react'; // Added for consistency
+import { ArrowLeft, Flame } from 'lucide-react';
 import StandardMode from './StandardMode';
 import AroundTheWorld from './AroundTheWorld';
 
@@ -29,7 +29,6 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
                         gap: '4px', fontSize: '1rem', fontWeight: '600'
                     }}
                 >
-                    {/* Lucide replacement for consistent stroke weight */}
                     <ArrowLeft size={18} strokeWidth={2.5} />
                     Exit
                 </button>
@@ -41,7 +40,6 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
             {/* ROUTE TO THE CORRECT GAME MODE */}
             {mode === 'WORLD' ? (
                 <AroundTheWorld
-                    // FORCED: Always use SIMPLE scoring for Around the World
                     scoringStyle="SIMPLE"
                     onLogRound={handleLogRound}
                 />
@@ -49,14 +47,16 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
                 <StandardMode
                     scoringStyle={scoringStyle}
                     onLogRound={handleLogRound}
+                    roundCount={sessionRounds.length}
+                    onFinish={handleFinishSession}
                 />
             )}
 
-            {/* PROGRESS LIST (ONLY FOR STANDARD MODE) */}
+            {/* PROGRESS LIST (SHOWING ALL ROUNDS) */}
             {sessionRounds.length > 0 && mode === 'STANDARD' && (
                 <div style={{ marginTop: '15px' }}>
                     <ul className="history-list">
-                        {sessionRounds.slice(0, 3).map((r) => {
+                        {sessionRounds.map((r) => {
                             const isPerfectRound = r.made === r.attempts;
                             return (
                                 <li key={r.id} className={`history-item session-item ${isPerfectRound ? 'perfect-round' : ''}`}>
@@ -66,7 +66,6 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
                                             {r.firstPuttMade && <span style={{ fontSize: '0.6rem', background: '#fef3c7', color: '#d97706', padding: '1px 5px', borderRadius: '4px', fontWeight: '800' }}>CLUTCH</span>}
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            {/* Lucide Flame icon to match the Dashboard */}
                                             {isPerfectRound && <Flame size={16} color="#f97316" fill="#f97316" />}
                                             <strong style={{ fontSize: '1.1rem' }}>{r.made}/{r.attempts}</strong>
                                         </div>
@@ -76,21 +75,6 @@ export default function PracticeSession({ onSave, onCancel, initialMode = 'STAND
                         })}
                     </ul>
                 </div>
-            )}
-
-            {/* FINISH BUTTON */}
-            {sessionRounds.length > 0 && (
-                <button
-                    className="finish-btn"
-                    onClick={handleFinishSession}
-                    style={{
-                        marginTop: '15px', backgroundColor: '#111827', color: '#ffffff',
-                        padding: '20px', borderRadius: '16px', fontSize: '1.1rem',
-                        fontWeight: '800', textTransform: 'uppercase', width: '100%', border: 'none', outline: 'none'
-                    }}
-                >
-                    FINISH SESSION
-                </button>
             )}
         </div>
     );
