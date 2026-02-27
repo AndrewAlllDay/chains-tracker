@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// Haptic feedback helper from League mode
+// Haptic feedback helper
 const triggerHaptic = (pattern) => {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate(pattern);
@@ -35,7 +35,7 @@ export default function StandardMode({ scoringStyle, onLogRound, roundCount, onF
     const handleLogClick = (e) => {
         if (e) e.preventDefault();
 
-        // Trigger the "Success" haptic pattern from League mode
+        // Trigger the "Success" haptic pattern
         triggerHaptic([50, 50, 50]);
 
         const newRound = {
@@ -157,23 +157,23 @@ export default function StandardMode({ scoringStyle, onLogRound, roundCount, onF
                 </div>
             )}
 
-            {/* ROUND STATS DISPLAY */}
-            <div style={{
-                marginBottom: '15px',
-                fontWeight: '900',
-                fontSize: '1.1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%'
-            }}>
-                <div>
-                    <span style={{ color: 'var(--text-muted)' }}>ROUND: </span>
-                    {roundCount + 1}
+            {/* ROUND STATS DISPLAY - Only shows after first round is submitted */}
+            {roundCount > 0 && (
+                <div style={{
+                    marginBottom: '15px',
+                    fontWeight: '900',
+                    fontSize: '1.1rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: '100%'
+                }}>
+                    <div>
+                        <span style={{ color: 'var(--text-muted)' }}>ROUNDS: </span>
+                        {roundCount}
+                    </div>
+                    <div style={{ color: 'var(--primary)' }}></div>
                 </div>
-                <div style={{ color: 'var(--primary)' }}>
-
-                </div>
-            </div>
+            )}
 
             {/* ACTION BUTTONS */}
             <button
