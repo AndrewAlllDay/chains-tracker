@@ -7,7 +7,8 @@ import {
     Sparkles,
     ListChecks,
     X,
-    ChevronDown
+    ChevronDown,
+    TrendingUp // NEW: Imported just for the accordion icon
 } from 'lucide-react';
 import './AppGuide.css';
 
@@ -48,6 +49,14 @@ const AppGuide = ({ isOpen, onClose, userRole }) => {
             color: "#3b82f6",
             role: "any",
             content: "A dynamic practice mode. Perform well to advance further; struggle and you'll be pushed back. Clear the 33ft station to unlock 'The Challenge'."
+        },
+        // NEW: Just added the Ladder Drill to the accordion here
+        {
+            title: "Ladder Drill",
+            icon: <TrendingUp size={18} color="#10b981" strokeWidth={2.5} />,
+            color: "#10b981",
+            role: "any",
+            content: "A 3-putt push-your-luck drill. Make all 3 to move back 5ft, make 2 to stay, make 1 to fall back 5ft, and make 0 to wipeout and start over. Clear 40ft to win."
         }
     ];
 
