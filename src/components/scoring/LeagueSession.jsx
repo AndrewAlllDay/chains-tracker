@@ -7,6 +7,15 @@ const triggerHaptic = (pattern) => {
     }
 };
 
+// NEW: Distance mapping for streak/accuracy tracking
+const STATION_DISTANCES = {
+    1: 18,
+    2: 25,
+    3: 25,
+    4: 33,
+    5: 40
+};
+
 export default function LeagueSession({ onSave, onCancel }) {
     const [currentRound, setCurrentRound] = useState(1);
     const [activeStation, setActiveStation] = useState(null);
@@ -28,6 +37,22 @@ export default function LeagueSession({ onSave, onCancel }) {
 
     const calculateRoundScore = (round) => {
         return Object.entries(sessionData[round] || {}).reduce((acc, [st, m]) => acc + (m * st), 0);
+    };
+
+    // NEW: Formats league data to match practice rounds for stats consistency
+    const formatDataForHistory = () => {
+        const rounds = [];
+        Object.values(sessionData).forEach((stations) => {
+            Object.entries(stations).forEach(([stNum, made]) => {
+                rounds.push({
+                    distance: STATION_DISTANCES[stNum],
+                    made: made,
+                    attempts: 5,
+                    points: parseInt(stNum) // Keep point value for reference
+                });
+            });
+        });
+        return rounds;
     };
 
     const openStation = (st) => {
@@ -70,7 +95,6 @@ export default function LeagueSession({ onSave, onCancel }) {
                         fontWeight: '600'
                     }}
                 >
-                    {/* Consistent SVG Back Arrow */}
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -111,7 +135,7 @@ export default function LeagueSession({ onSave, onCancel }) {
                                 style={{ outline: 'none' }}
                             >
                                 <div className="station-num">Station {st}</div>
-                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{st} pts/make</div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{STATION_DISTANCES[st]}ft • {st} pts</div>
                                 {hasScore && <div className="station-result">{val}/5</div>}
                             </button>
                         );
@@ -126,7 +150,6 @@ export default function LeagueSession({ onSave, onCancel }) {
                     gap: '10px'
                 }}>
 
-                    {/* BACK BUTTON (ROUND NAVIGATION) */}
                     {currentRound > 1 && (
                         <button
                             className="secondary-btn"
@@ -143,7 +166,6 @@ export default function LeagueSession({ onSave, onCancel }) {
                                 justifyContent: 'center'
                             }}
                         >
-                            {/* Consistent SVG for the big back button */}
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -151,7 +173,6 @@ export default function LeagueSession({ onSave, onCancel }) {
                         </button>
                     )}
 
-                    {/* PRIMARY ACTION */}
                     {!isLastRound ? (
                         <button
                             className="save-btn league-btn"
@@ -182,7 +203,8 @@ export default function LeagueSession({ onSave, onCancel }) {
                                 outline: 'none',
                                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
                             }}
-                            onClick={() => onSave(sessionData, calculateTotalScore())}
+
+                            onClick={() => onSave(formatDataForHistory(), calculateTotalScore())}
                         >
                             Finish League Night
                         </button>
@@ -195,7 +217,7 @@ export default function LeagueSession({ onSave, onCancel }) {
                 <div className="modal-overlay" onClick={() => setActiveStation(null)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2 className="modal-title">Station {activeStation}</h2>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{activeStation} pts per make</p>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{STATION_DISTANCES[activeStation]}ft • {activeStation} pts per make</p>
 
                         <div className="stepper-controls">
                             <button className="step-btn minus" style={{ border: 'none', outline: 'none' }} onClick={() => setTempMade(Math.max(0, tempMade - 1))}>−</button>

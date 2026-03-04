@@ -19,14 +19,14 @@ import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 const CURRENT_VERSION = 3.3;
 
+// NEW: Station to distance mapping for on-the-fly history fixing
+const STATION_DISTANCES = { 1: 18, 2: 25, 3: 25, 4: 33, 5: 40 };
+
 function App() {
   // --- STATE ---
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // NEW: Flag to prevent the app from rendering before Firestore syncs the real data
   const [isFirestoreSynced, setIsFirestoreSynced] = useState(false);
-
   const [history, setHistory] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [userSettings, setUserSettings] = useState({ scoringStyle: 'PRO', hasCompletedOnboarding: false });
@@ -61,7 +61,7 @@ function App() {
         setHistory([]);
         setUserRole(null);
         setNeedsRoleSelection(false);
-        setIsFirestoreSynced(false); // NEW: Reset the sync flag on logout
+        setIsFirestoreSynced(false);
       }
     });
     return () => unsubscribe();
@@ -76,14 +76,33 @@ function App() {
         if (docSnap.exists()) {
           const data = docSnap.data();
 
-          // 1. Sync History
-          const sortedHistory = (data.history || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+          // 1. Sync History and retroactively fix LEAGUE sessions for stats
+          const rawHistory = data.history || [];
+          const sortedHistory = rawHistory.map(session => {
+            // If it's a LEAGUE session missing the 'rounds' array (and isn't legacy), we fix it
+            if (session.type === 'LEAGUE' && !session.rounds && session.details) {
+              const generatedRounds = [];
+              Object.values(session.details).forEach((stations) => {
+                Object.entries(stations).forEach(([stNum, made]) => {
+                  generatedRounds.push({
+                    distance: STATION_DISTANCES[stNum],
+                    made: made,
+                    attempts: 5,
+                    points: parseInt(stNum)
+                  });
+                });
+              });
+              return { ...session, rounds: generatedRounds };
+            }
+            return session;
+          }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
           setHistory(sortedHistory);
 
-          // 2. Sync Settings (with fallback for the onboarding flag)
+          // 2. Sync Settings
           if (data.settings) {
             setUserSettings({
-              hasCompletedOnboarding: false, // Default fallback
+              hasCompletedOnboarding: false,
               ...data.settings
             });
           }
@@ -113,12 +132,9 @@ function App() {
           initialModalCheckDone.current = true;
         }
 
-        // NEW: UNLOCK RENDER. Firestore has returned our true data state.
         setIsFirestoreSynced(true);
-
       }, (error) => {
         console.error("Firestore sync error:", error);
-        // NEW: Fail-safe so the app doesn't hang infinitely if Firestore fails
         setIsFirestoreSynced(true);
       });
       return () => unsubscribe();
@@ -181,22 +197,24 @@ function App() {
     const mergedSession = {
       ...existingSession,
       summary: {
-        attempts: (existingSession.summary?.attempts || 0) + newSessionData.summary.attempts,
-        made: (existingSession.summary?.made || 0) + newSessionData.summary.made
+        attempts: (existingSession.summary?.attempts || 0) + (newSessionData.summary?.attempts || 0),
+        made: (existingSession.summary?.made || 0) + (newSessionData.summary?.made || 0)
       },
-      rounds: [...existingSession.rounds, ...newSessionData.rounds]
+      rounds: [...(existingSession.rounds || []), ...(newSessionData.rounds || [])]
     };
     const newHistory = history.map(s => s.id === existingSession.id ? mergedSession : s);
-    const filteredHistory = newHistory.filter(s => s.id !== newSessionData.id || s.id === existingSession.id);
-    saveHistoryToStorage(filteredHistory);
+    saveHistoryToStorage(newHistory);
     setPendingSession(null);
     setView('HOME');
   };
 
   const processPracticeSave = (newSession) => {
     const today = new Date().toLocaleDateString('en-US');
+    // UPDATED: Now looks for any activity (Practice or League) to suggest a merge
     const existingToday = history.find(s =>
-      s.date === today && s.type === 'PRACTICE' && !s.subType && !s.isLegacy
+      s.date === today &&
+      (s.type === 'PRACTICE' || s.type === 'LEAGUE') &&
+      !s.subType && !s.isLegacy
     );
 
     if (existingToday) {
@@ -273,13 +291,11 @@ function App() {
     }, 'danger');
   }
 
-  // NEW: Updated loading check to also wait for Firestore to finish its initial sync
   if (loading || (user && !isFirestoreSynced)) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
   if (!user) return <LoginLanding onLogin={handleLogin} />;
 
   return (
     <div className="container">
-
       {needsRoleSelection ? (
         <RoleSelector onSelect={handleRoleSelect} />
       ) : (
@@ -301,7 +317,6 @@ function App() {
               showSettings={showSettings}
               setShowSettings={setShowSettings}
               handleRoleSelect={handleRoleSelect}
-              // NEW: Passing these down so Dashboard can control the complete header
               setShowGuideModal={setShowGuideModal}
               logoIcon={logoIcon}
             />
@@ -310,16 +325,21 @@ function App() {
           {view === 'LEAGUE' && (
             <div className="session-view-wrapper">
               <LeagueSession
-                onSave={(sessionData, finalScore) => {
-                  const calc = (r) => Object.entries(sessionData[r] || {}).reduce((acc, [st, m]) => acc + (m * parseInt(st)), 0);
+                onSave={(formattedRounds, finalScore) => {
                   const newSession = {
                     id: Date.now(),
                     date: new Date().toLocaleDateString('en-US'),
                     type: 'LEAGUE',
+                    subType: 'LEAGUE', // Added to prevent "Legacy" fallback
                     score: finalScore,
-                    roundScores: [calc(1), calc(2), calc(3)],
-                    details: sessionData
+                    rounds: formattedRounds,
+                    summary: {
+                      attempts: formattedRounds.length * 5,
+                      made: formattedRounds.reduce((acc, r) => acc + r.made, 0)
+                    }
                   };
+                  // Use saveHistory directly for League to avoid the Practice merge logic 
+                  // until we know the Legacy bug is squashed.
                   saveHistoryToStorage(newSession);
                   setView('HOME');
                 }}
@@ -372,7 +392,7 @@ function App() {
             </div>
             <h2 style={{ marginBottom: '10px', fontWeight: '900' }}>Daily Practice <br /> Detected!</h2>
             <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>
-              You already practiced today. Would you like to combine this session?
+              You already logged a session today. Would you like to combine them?
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <button className="save-btn" onClick={() => handleMergeSession(pendingSession.existing, pendingSession.new)}>Combine Sessions</button>
