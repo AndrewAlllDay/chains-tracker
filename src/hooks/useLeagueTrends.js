@@ -11,11 +11,38 @@ export const useLeagueTrends = (history) => {
         const sums = { 1: 0, 2: 0, 3: 0 };
         let c1M = 0, c1A = 0, c2M = 0, c2A = 0;
 
+        // NEW: Track stats per station (1-5)
+        const stationMap = {
+            1: { made: 0, att: 0, dist: 18 },
+            2: { made: 0, att: 0, dist: 25 },
+            3: { made: 0, att: 0, dist: 25 },
+            4: { made: 0, att: 0, dist: 33 },
+            5: { made: 0, att: 0, dist: 40 }
+        };
+
         granularSessions.forEach(s => {
             [1, 2, 3].forEach(r => {
-                sums[r] += Object.entries(s.details?.[r] || {}).reduce((acc, [k, v]) => acc + (v * k), 0);
-                [1, 2, 3].forEach(st => { c1M += (s.details?.[r]?.[st] || 0); c1A += 5; });
-                [4, 5].forEach(st => { c2M += (s.details?.[r]?.[st] || 0); c2A += 5; });
+                const roundDetails = s.details?.[r] || {};
+
+                // Calculate round averages
+                sums[r] += Object.entries(roundDetails).reduce((acc, [st, val]) => acc + (val * st), 0);
+
+                // Calculate Circle Accuracy & Station Ratios
+                [1, 2, 3, 4, 5].forEach(st => {
+                    const made = roundDetails[st] || 0;
+                    const att = 5; // Standard 5 putts per station
+
+                    // Circle 1 (Stations 1, 2, 3)
+                    if (st <= 3) { c1M += made; c1A += att; }
+                    // Circle 2 (Stations 4, 5)
+                    else { c2M += made; c2A += att; }
+
+                    // Individual Station Tracking
+                    if (stationMap[st]) {
+                        stationMap[st].made += made;
+                        stationMap[st].att += att;
+                    }
+                });
             });
         });
 
@@ -37,6 +64,15 @@ export const useLeagueTrends = (history) => {
             3: Math.round(sums[3] / avgsCount)
         };
 
+        // Format station stats for the UI
+        const stationStats = Object.entries(stationMap).map(([id, data]) => ({
+            id,
+            dist: data.dist,
+            made: data.made,
+            attempts: data.att,
+            pct: data.att > 0 ? Math.round((data.made / data.att) * 100) : 0
+        }));
+
         let trend = null;
         if (ls.length >= 2) {
             const latestTotal = getSessionTotal(ls[0]);
@@ -51,6 +87,7 @@ export const useLeagueTrends = (history) => {
             maxAvg: Math.max(...Object.values(avgs)),
             c1: { pct: c1A > 0 ? Math.round((c1M / c1A) * 100) : 0 },
             c2: { pct: c2A > 0 ? Math.round((c2M / c2A) * 100) : 0 },
+            stationStats,
             trend,
             seasonAvg,
             personalBest

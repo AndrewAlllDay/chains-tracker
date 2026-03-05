@@ -1,8 +1,11 @@
 import React from 'react';
 import { Trophy, Target } from 'lucide-react';
 
-export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onStartSession }) {
-    const gridStyle = isLeagueMode
+export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onStartSession, isLeagueArchived }) {
+    // If league is archived, we treat the grid layout as if it's not league mode
+    const effectiveLeagueMode = isLeagueMode && !isLeagueArchived;
+
+    const gridStyle = effectiveLeagueMode
         ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%', marginBottom: '20px' }
         : { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginBottom: '20px' };
 
@@ -19,7 +22,7 @@ export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onS
                 pointerEvents: 'auto'
             }}
         >
-            {isLeagueMode && (
+            {effectiveLeagueMode && (
                 <button
                     className="action-card league action-btn-league"
                     onClick={() => onStartSession('LEAGUE')}
@@ -39,8 +42,8 @@ export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onS
                 className="action-card secondary action-btn-practice"
                 onClick={() => onStartSession('PRACTICE')}
                 style={{
-                    width: userRole === 'practice' ? '65%' : '100%',
-                    minWidth: userRole === 'practice' ? '220px' : '0',
+                    width: userRole === 'practice' || isLeagueArchived ? '65%' : '100%',
+                    minWidth: userRole === 'practice' || isLeagueArchived ? '220px' : '0',
                     display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', padding: '12px'
                 }}
             >
@@ -48,7 +51,7 @@ export default function ActionGrid({ isLeagueMode, userRole, showOnboarding, onS
                 <div className="action-btn-text" style={{ textAlign: 'left' }}>
                     <strong style={{ display: 'block', fontSize: '0.9rem' }}>Start Practice</strong>
                     <div className="action-btn-sub" style={{ fontSize: '0.7rem', opacity: 0.9 }}>
-                        {isLeagueMode ? 'On Your Own' : 'Free Play'}
+                        {effectiveLeagueMode ? 'On Your Own' : 'Free Play'}
                     </div>
                 </div>
             </button>

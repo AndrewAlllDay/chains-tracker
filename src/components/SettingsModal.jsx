@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, LogOut, ShieldCheck, Dices } from 'lucide-react';
+import { X, LogOut, ShieldCheck, Dices, Archive } from 'lucide-react';
 import './SettingsModal.css';
 
 export default function SettingsModal({
@@ -7,6 +7,7 @@ export default function SettingsModal({
     onClose,
     isLeagueMode,
     isProMode,
+    isLeagueArchived,
     handleRoleSelect,
     updateSettings,
     handleLogout
@@ -28,12 +29,25 @@ export default function SettingsModal({
                     <div className="setting-info">
                         <ShieldCheck size={22} color="#44474e" />
                         <label>League Mode</label>
-
                     </div>
 
                     <div
                         onClick={() => handleRoleSelect(isLeagueMode ? 'practice' : 'league')}
                         className={`toggle-switch ${isLeagueMode ? 'active' : 'inactive'}`}
+                    >
+                        <div className="toggle-knob" />
+                    </div>
+                </div>
+
+                {/* NEW: Archive League Toggle */}
+                <div className="setting-row">
+                    <div className="setting-info">
+                        <Archive size={22} color="#44474e" />
+                        <label>Hide League UI (Off-Season)</label>
+                    </div>
+                    <div
+                        onClick={() => updateSettings({ isLeagueArchived: !isLeagueArchived })}
+                        className={`toggle-switch ${isLeagueArchived ? 'active' : 'inactive'}`}
                     >
                         <div className="toggle-knob" />
                     </div>
@@ -51,7 +65,9 @@ export default function SettingsModal({
                         <div className="toggle-knob" />
                     </div>
                 </div>
+
                 <div className="app-version text-center w-full block">Version 1.5</div>
+
                 <button className="logout-action-btn" onClick={() => { handleLogout(); onClose(); }}>
                     <LogOut size={18} />
                     Sign Out

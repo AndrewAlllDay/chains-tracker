@@ -7,6 +7,7 @@ import OnboardingOverlay from './OnboardingOverlay';
 import PostSessionCoachOverlay from './PostSessionCoachOverlay';
 import StreakPill from './StreakPill';
 import ActionGrid from './ActionGrid';
+import SeasonWrapUpModal from './SeasonWrapUpModal';
 import { useStreak } from '../hooks/useStreak';
 import { useOnboarding } from '../hooks/useOnboarding';
 import './Dashboard.css';
@@ -15,7 +16,7 @@ import { Settings } from 'lucide-react';
 export default function Dashboard({
     user, userRole, history, startSingleSession, startLeagueSession, deleteHistorySession,
     onManualMerge, handleLogout, userSettings, updateSettings, showSettings, setShowSettings, handleRoleSelect,
-    setShowGuideModal, logoIcon, showGuideModal // Assuming showGuideModal is passed or managed
+    setShowGuideModal, logoIcon, showGuideModal
 }) {
     const [expandedSession, setExpandedSession] = useState(null);
     const [showStats, setShowStats] = useState(false);
@@ -23,10 +24,41 @@ export default function Dashboard({
     const [showStreakModal, setShowStreakModal] = useState(false);
     const [activeFilter, setActiveFilter] = useState('ALL');
 
+    const [hasDismissedWrapUp, setHasDismissedWrapUp] = useState(false);
+
     const { streak, streakMilestone } = useStreak(history);
     const { showOnboarding, showFirstSessionOverlay, completeOnboarding, completePostSessionCoach } = useOnboarding(userSettings, updateSettings, history);
 
     const [tourStepIndex, setTourStepIndex] = useState(0);
+
+    const isLeagueArchived = userSettings?.isLeagueArchived === true;
+
+    const shouldShowWrapUp = useMemo(() => {
+        const hasLeagueHistory = history.some(s => s.type === 'LEAGUE');
+        const hasSeenWrapUp = userSettings?.hasSeenSeasonWrapUp === true;
+
+        return (
+            hasLeagueHistory &&
+            !isLeagueArchived &&
+            !hasSeenWrapUp &&
+            !showOnboarding &&
+            !showFirstSessionOverlay &&
+            !hasDismissedWrapUp
+        );
+    }, [history, isLeagueArchived, userSettings?.hasSeenSeasonWrapUp, showOnboarding, showFirstSessionOverlay, hasDismissedWrapUp]);
+
+    const handleArchiveFromWrapUp = () => {
+        updateSettings({
+            isLeagueArchived: true,
+            hasSeenSeasonWrapUp: true
+        });
+        setHasDismissedWrapUp(true);
+    };
+
+    const handleCloseWrapUp = () => {
+        updateSettings({ hasSeenSeasonWrapUp: true });
+        setHasDismissedWrapUp(true);
+    };
 
     const activeHighlight = useMemo(() => {
         if (!showFirstSessionOverlay) return "none";
@@ -34,14 +66,14 @@ export default function Dashboard({
         return steps[tourStepIndex] || "none";
     }, [showFirstSessionOverlay, tourStepIndex]);
 
-    // Robust Scroll Lock for all modals and overlays
     useEffect(() => {
         const isOverlayActive =
             showOnboarding ||
             showFirstSessionOverlay ||
             showSettings ||
             showStreakModal ||
-            showGuideModal;
+            showGuideModal ||
+            shouldShowWrapUp;
 
         const body = document.body;
 
@@ -68,7 +100,7 @@ export default function Dashboard({
             body.style.width = '';
             body.classList.remove('no-scroll');
         };
-    }, [showOnboarding, showFirstSessionOverlay, showSettings, showStreakModal, showGuideModal]);
+    }, [showOnboarding, showFirstSessionOverlay, showSettings, showStreakModal, showGuideModal, shouldShowWrapUp]);
 
     const toggleSession = (id) => setExpandedSession(expandedSession === id ? null : id);
     const safeHistory = Array.isArray(history) ? history : [];
@@ -90,6 +122,9 @@ export default function Dashboard({
     const displayedHistory = showAllHistory ? filteredHistory : filteredHistory.slice(0, 5);
 
     if (!isDataLoaded) return <div className="dashboard-loading">Loading...</div>;
+
+    // FIX: Always include 'LEAGUE' in filters so past rounds can be found
+    const filterOptions = ['ALL', 'PRACTICE', 'WORLD', 'LEAGUE'];
 
     return (
         <div className="dashboard container" style={{ position: 'relative', minHeight: '100vh' }}>
@@ -151,6 +186,7 @@ export default function Dashboard({
                 userRole={userRole}
                 showOnboarding={showOnboarding}
                 onStartSession={handleStartSession}
+                isLeagueArchived={isLeagueArchived}
             />
 
             {hasHistoryData && (
@@ -170,7 +206,7 @@ export default function Dashboard({
 
                     <div className="activity-filters-container">
                         <div className={`activity-filters ${activeHighlight === 'activity' ? 'tour-highlight-active' : ''}`} style={{ width: 'fit-content', margin: '0 auto' }}>
-                            {['ALL', 'PRACTICE', 'WORLD', 'LEAGUE'].map(f => (
+                            {filterOptions.map(f => (
                                 <button key={f} className={`filter-btn ${activeFilter === f ? 'active' : ''}`} onClick={() => !showFirstSessionOverlay && setActiveFilter(f)}>{f}</button>
                             ))}
                         </div>
@@ -188,8 +224,25 @@ export default function Dashboard({
                 </>
             )}
 
-            <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} isLeagueMode={userRole === 'league'} isProMode={userSettings?.scoringStyle === 'PRO'} handleRoleSelect={handleRoleSelect} updateSettings={updateSettings} handleLogout={handleLogout} />
+            <SettingsModal
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+                isLeagueMode={userRole === 'league'}
+                isProMode={userSettings?.scoringStyle === 'PRO'}
+                isLeagueArchived={isLeagueArchived}
+                handleRoleSelect={handleRoleSelect}
+                updateSettings={updateSettings}
+                handleLogout={handleLogout}
+            />
+
             <StreakModal isOpen={showStreakModal} onClose={() => setShowStreakModal(false)} streak={streak} milestone={streakMilestone} history={history} />
+
+            <SeasonWrapUpModal
+                isOpen={shouldShowWrapUp}
+                onClose={handleCloseWrapUp}
+                history={history}
+                onArchiveLeague={handleArchiveFromWrapUp}
+            />
         </div>
     );
 }

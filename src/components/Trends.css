@@ -140,9 +140,23 @@
 /* Stat Cards & Bar Charts */
 .trends-stat-card {
     padding: 20px;
+    margin-bottom: 15px;
+    /* Added native margin */
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+/* Card Mode Overrides */
+.trends-stat-card.pro {
+    border-left: 4px solid #10b981;
+}
+
+.trends-stat-card.world {
+    border-left: 4px solid #3b82f6;
 }
 
 .trends-stat-title {
@@ -152,6 +166,10 @@
     margin-bottom: 20px;
     text-align: center;
     font-weight: 800;
+}
+
+.trends-stat-title.compact {
+    margin-bottom: 4px;
 }
 
 .trends-stat-title.bar-title {
@@ -225,12 +243,18 @@
     border-radius: 12px;
     border: 1px solid var(--border);
     text-align: center;
+    margin-bottom: 15px;
 }
 
 .scoring-flex-row {
     display: flex;
     justify-content: space-around;
     align-items: center;
+}
+
+.scoring-flex-row.centered {
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
 .scoring-val {
@@ -245,6 +269,26 @@
 
 .scoring-val.highlight-practice {
     color: var(--primary);
+}
+
+.scoring-val.highlight-world {
+    color: #3b82f6;
+}
+
+.scoring-val.highlight-pro {
+    color: #f59e0b;
+}
+
+.scoring-val.highlight-streak {
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+}
+
+.scoring-val.medium {
+    font-size: 1.4rem;
 }
 
 .scoring-label {
@@ -316,7 +360,6 @@
     flex-direction: column;
     align-items: flex-end;
     width: 45px;
-    /* Fixed width to prevent jumping */
 }
 
 .dist-trend-fraction {
@@ -326,12 +369,11 @@
     margin-top: -2px;
 }
 
-/* 1. The Base State (Closed/Idle) */
+/* Toggle Buttons */
 .trends-toggle-btn {
     background: white;
     color: var(--text-muted);
     border: 2px solid var(--border) !important;
-    /* Forces the grey border back */
     border-radius: 20px;
     padding: 8px 20px;
     font-size: 0.80rem;
@@ -342,15 +384,100 @@
     transition: border-color 0.2s ease;
 }
 
-/* 2. The Interaction States (To kill that blue/white leak) */
 .trends-toggle-btn:hover,
 .trends-toggle-btn:focus,
 .trends-toggle-btn:active {
-    /* If you want the border to disappear on hover, use transparent. 
-       If you want it to stay grey, use var(--border) */
     border-color: var(--border) !important;
     background-color: white !important;
     color: var(--text-muted) !important;
     outline: none !important;
     box-shadow: none !important;
+}
+
+/* --- REUSABLE CHART & INSIGHT STYLES --- */
+.trend-subtitle {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.trend-graph-flex {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.trend-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+.trend-chart-area {
+    flex: 1;
+}
+
+.chart-bar-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 100px;
+    padding: 0 10px;
+    gap: 8px;
+}
+
+.chart-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 40px;
+}
+
+.chart-bar-val {
+    font-size: 0.7rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.chart-bar-fill {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+}
+
+.chart-bar-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.pro-insights-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pro-insights-header .trends-stat-title {
+    margin-bottom: 0;
+}
+
+.pro-insights-badge {
+    font-size: 0.65rem;
+    background: #d1fae5;
+    color: #059669;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
 }

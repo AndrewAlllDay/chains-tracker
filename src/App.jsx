@@ -29,7 +29,15 @@ function App() {
   const [isFirestoreSynced, setIsFirestoreSynced] = useState(false);
   const [history, setHistory] = useState([]);
   const [userRole, setUserRole] = useState(null);
-  const [userSettings, setUserSettings] = useState({ scoringStyle: 'PRO', hasCompletedOnboarding: false });
+
+  // FIX 1: Set default scoring to SIMPLE and initialize off-season flags
+  const [userSettings, setUserSettings] = useState({
+    scoringStyle: 'SIMPLE',
+    hasCompletedOnboarding: false,
+    isLeagueArchived: false,
+    hasSeenSeasonWrapUp: false
+  });
+
   const [needsRoleSelection, setNeedsRoleSelection] = useState(false);
   const [view, setView] = useState('HOME');
   const [showGuideModal, setShowGuideModal] = useState(false);
@@ -76,10 +84,9 @@ function App() {
         if (docSnap.exists()) {
           const data = docSnap.data();
 
-          // 1. Sync History and retroactively fix LEAGUE sessions for stats
+          // 1. Sync History
           const rawHistory = data.history || [];
           const sortedHistory = rawHistory.map(session => {
-            // If it's a LEAGUE session missing the 'rounds' array (and isn't legacy), we fix it
             if (session.type === 'LEAGUE' && !session.rounds && session.details) {
               const generatedRounds = [];
               Object.values(session.details).forEach((stations) => {
@@ -101,10 +108,10 @@ function App() {
 
           // 2. Sync Settings
           if (data.settings) {
-            setUserSettings({
-              hasCompletedOnboarding: false,
+            setUserSettings(prev => ({
+              ...prev,
               ...data.settings
-            });
+            }));
           }
 
           // 3. Version Tracking
@@ -194,15 +201,21 @@ function App() {
   };
 
   const handleMergeSession = (existingSession, newSessionData) => {
+    const [olderSession, newerSession] = [existingSession, newSessionData].sort((a, b) => a.id - b.id);
+
     const mergedSession = {
       ...existingSession,
       summary: {
         attempts: (existingSession.summary?.attempts || 0) + (newSessionData.summary?.attempts || 0),
         made: (existingSession.summary?.made || 0) + (newSessionData.summary?.made || 0)
       },
-      rounds: [...(existingSession.rounds || []), ...(newSessionData.rounds || [])]
+      rounds: [...(olderSession.rounds || []), ...(newerSession.rounds || [])]
     };
-    const newHistory = history.map(s => s.id === existingSession.id ? mergedSession : s);
+
+    const newHistory = history
+      .filter(s => s.id !== newSessionData.id)
+      .map(s => s.id === existingSession.id ? mergedSession : s);
+
     saveHistoryToStorage(newHistory);
     setPendingSession(null);
     setView('HOME');
@@ -210,7 +223,6 @@ function App() {
 
   const processPracticeSave = (newSession) => {
     const today = new Date().toLocaleDateString('en-US');
-    // UPDATED: Now looks for any activity (Practice or League) to suggest a merge
     const existingToday = history.find(s =>
       s.date === today &&
       (s.type === 'PRACTICE' || s.type === 'LEAGUE') &&
@@ -225,11 +237,19 @@ function App() {
     }
   };
 
+  // FIX 2: Explicitly update settings state during role selection to trigger Onboarding
   const handleRoleSelect = async (selectedRole) => {
     if (user) {
       try {
-        await setDoc(doc(db, "users", user.uid), { role: selectedRole }, { merge: true });
+        const freshSettings = { ...userSettings, hasCompletedOnboarding: false };
+
+        await setDoc(doc(db, "users", user.uid), {
+          role: selectedRole,
+          settings: freshSettings
+        }, { merge: true });
+
         setUserRole(selectedRole);
+        setUserSettings(freshSettings); // Force immediate local update
         setNeedsRoleSelection(false);
       } catch (e) {
         console.error("Error saving role:", e);
@@ -319,6 +339,7 @@ function App() {
               handleRoleSelect={handleRoleSelect}
               setShowGuideModal={setShowGuideModal}
               logoIcon={logoIcon}
+              showGuideModal={showGuideModal}
             />
           )}
 
@@ -330,7 +351,7 @@ function App() {
                     id: Date.now(),
                     date: new Date().toLocaleDateString('en-US'),
                     type: 'LEAGUE',
-                    subType: 'LEAGUE', // Added to prevent "Legacy" fallback
+                    subType: 'LEAGUE',
                     score: finalScore,
                     rounds: formattedRounds,
                     summary: {
@@ -338,8 +359,6 @@ function App() {
                       made: formattedRounds.reduce((acc, r) => acc + r.made, 0)
                     }
                   };
-                  // Use saveHistory directly for League to avoid the Practice merge logic 
-                  // until we know the Legacy bug is squashed.
                   saveHistoryToStorage(newSession);
                   setView('HOME');
                 }}

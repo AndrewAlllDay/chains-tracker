@@ -1,10 +1,9 @@
 import React from 'react';
-import { Target, Trophy } from 'lucide-react';
+import { Target, Trophy, Info } from 'lucide-react';
 
 export default function RoleSelector({ onSelect }) {
     return (
         <div className="selector-container" style={{
-            /* Removed opacity and animation for instant loading */
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -28,6 +27,7 @@ export default function RoleSelector({ onSelect }) {
                             padding: '20px',
                             backgroundColor: '#fff',
                             border: '1px solid #e5e7eb',
+                            borderRadius: '16px',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -51,31 +51,49 @@ export default function RoleSelector({ onSelect }) {
                             padding: '20px',
                             cursor: 'pointer',
                             display: 'flex',
-                            alignItems: 'center',
-                            gap: '15px',
+                            flexDirection: 'column',
+                            gap: '12px',
                             backgroundColor: 'var(--league-green, #10b981)',
                             border: 'none',
+                            borderRadius: '16px',
                             position: 'relative'
                         }}
                         onClick={() => onSelect('league')}
                     >
-                        <Trophy size={32} color="#fff" strokeWidth={2.5} />
-                        <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <strong style={{ fontSize: '1.1rem', color: '#fff' }}>League Player</strong>
-                                <span style={{
-                                    fontSize: '0.65rem',
-                                    background: 'rgba(255,255,255,0.2)',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px',
-                                    color: '#fff',
-                                    fontWeight: '800',
-                                    textTransform: 'uppercase'
-                                }}>Full Access</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <Trophy size={32} color="#fff" strokeWidth={2.5} />
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <strong style={{ fontSize: '1.1rem', color: '#fff' }}>League Player</strong>
+                                    <span style={{
+                                        fontSize: '0.65rem',
+                                        background: 'rgba(255,255,255,0.2)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        color: '#fff',
+                                        fontWeight: '800',
+                                        textTransform: 'uppercase'
+                                    }}>Full Access</span>
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: '#fff', opacity: 0.9, marginTop: '4px' }}>
+                                    Official league scoring + solo practice modes.
+                                </div>
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: '#fff', opacity: 0.9, marginTop: '4px' }}>
-                                Official league scoring + solo practice modes.
-                            </div>
+                        </div>
+
+                        {/* LEAGUE EXPLAINER BOX */}
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'start',
+                            gap: '8px',
+                            padding: '10px',
+                            backgroundColor: 'rgba(0, 0, 0, 0.15)',
+                            borderRadius: '8px'
+                        }}>
+                            <Info size={14} color="#fff" style={{ marginTop: '2px', flexShrink: 0 }} />
+                            <p style={{ fontSize: '0.72rem', color: '#fff', margin: 0, lineHeight: '1.4', fontWeight: '500' }}>
+                                <strong>Note:</strong> League mode is currently configured for the putting league at <strong>Johnson United Methodist Church</strong>.
+                            </p>
                         </div>
                     </button>
                 </div>

@@ -15,13 +15,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
     };
 
     return (
-        <ul className="history-list" style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-            position: 'relative',
-            zIndex: tourActive ? 5001 : 1
-        }}>
+        <ul className="history-list" style={{ zIndex: tourActive ? 5001 : 1 }}>
             {displayedHistory.map((session, index) => {
                 const isExpanded = expandedSession === session.id;
                 const isLeague = session.type === 'LEAGUE';
@@ -82,24 +76,22 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                             boxShadow: isExpanded ? '0 8px 16px rgba(0,0,0,0.1)' : '0 2px 4px rgba(0,0,0,0.05)',
                             transform: isExpanded ? 'scale(1.01)' : 'scale(1)',
                             zIndex: isHighlighted ? 6000 : 1,
-                            position: 'relative',
-                            marginBottom: '12px',
                             background: isHighlighted ? '#ffffff' : undefined
                         }}
                     >
                         <div className="activity-header">
                             <div>
                                 <div className="activity-date">{session.date}</div>
-                                <div className="activity-badges" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <div className="badge-mode" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <div className="activity-badges">
+                                    <div className="badge-mode">
                                         {isLeague ? <Trophy size={10} /> : (isWorld ? <Globe size={10} /> : isLadder ? <TrendingUp size={10} /> : <Target size={10} />)}
-                                        <span style={{ paddingTop: '1px' }}>
+                                        <span>
                                             {isLeague ? 'LEAGUE' : (isWorld ? 'AROUND THE WORLD' : isLadder ? 'LADDER DRILL' : 'PRACTICE')}
                                         </span>
                                     </div>
                                     {isLegacy && <div className="badge-legacy">LEGACY</div>}
                                     {perfectRounds > 0 && (
-                                        <div className={`badge-perfect ${isWorld ? 'world' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', paddingLeft: '4px', marginLeft: '6px', fontWeight: '600' }}>
+                                        <div className={`badge-perfect ${isWorld ? 'world' : ''}`}>
                                             <Flame size={12} fill="currentColor" /> x {perfectRounds}
                                         </div>
                                     )}
@@ -110,11 +102,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                     <div className="activity-score-val">{scoreDisplay}</div>
                                     <div className="activity-score-sub">{subtextDisplay}</div>
                                 </div>
-                                <span className="activity-toggle" style={{
-                                    transform: isExpanded ? 'rotate(180deg)' : 'none',
-                                    transition: 'transform 0.2s ease',
-                                    display: 'flex', alignItems: 'center'
-                                }}>
+                                <span className="activity-toggle" style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}>
                                     <ChevronDown size={18} />
                                 </span>
                             </div>
@@ -123,7 +111,7 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                         {isExpanded && (
                             <div className="activity-expanded">
                                 {!isLegacy && !isWorld && session.rounds && (
-                                    <div className="dist-summary" style={{ marginBottom: '20px' }}>
+                                    <div className="dist-summary">
                                         <div className="activity-section-title">Accuracy Breakdown</div>
                                         {Object.entries(session.rounds.reduce((acc, r) => {
                                             if (!acc[r.distance]) acc[r.distance] = { made: 0, attempts: 0, stations: new Set() };
@@ -132,23 +120,19 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                             if (r.points) acc[r.distance].stations.add(r.points);
                                             return acc;
                                         }, {})).map(([dist, stats]) => (
-                                            <div key={dist} className="dist-row" style={{ marginBottom: '8px' }}>
-                                                <div className="dist-labels" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                                                    <span className="dist-name" style={{ fontSize: '0.75rem', fontWeight: '800' }}>
+                                            <div key={dist} className="dist-row">
+                                                <div className="dist-labels">
+                                                    <span className="dist-name">
                                                         {dist}ft {isLeague && stats.stations.size > 0 &&
-                                                            <span style={{ fontWeight: '400', opacity: 0.6, fontSize: '0.7rem', marginLeft: '4px' }}>
+                                                            <span className="dist-stations">
                                                                 (S{Array.from(stats.stations).sort().join(', S')})
                                                             </span>
                                                         }
                                                     </span>
-                                                    <span className="dist-frac" style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>{stats.made}/{stats.attempts}</span>
+                                                    <span className="dist-frac">{stats.made}/{stats.attempts}</span>
                                                 </div>
-                                                <div className="progress-track" style={{ height: '4px', background: 'var(--bg)', borderRadius: '2px', overflow: 'hidden' }}>
-                                                    <div style={{
-                                                        width: `${(stats.made / stats.attempts) * 100}%`,
-                                                        height: '100%',
-                                                        background: isLeague ? 'var(--league)' : 'linear-gradient(90deg, #fb923c, var(--primary))'
-                                                    }} />
+                                                <div className="progress-track">
+                                                    <div className="progress-track-fill" style={{ width: `${(stats.made / stats.attempts) * 100}%` }} />
                                                 </div>
                                             </div>
                                         ))}
@@ -156,22 +140,22 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                 )}
 
                                 {isLeague && !isLegacy && displayRoundScores && (
-                                    <div className="league-rounds" style={{ display: 'flex', justifyContent: 'space-between', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--border)' }}>
+                                    <div className="league-rounds">
                                         {displayRoundScores.map((score, idx) => (
-                                            <div key={idx} style={{ textAlign: 'center' }}>
-                                                <div style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>R{idx + 1}</div>
-                                                <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--league)' }}>{score}</div>
+                                            <div key={idx} className="league-round-col">
+                                                <div className="league-round-label">R{idx + 1}</div>
+                                                <div className="league-round-val">{score}</div>
                                             </div>
                                         ))}
-                                        <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', paddingLeft: '16px' }}>
-                                            <div style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>TOTAL</div>
-                                            <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text)' }}>{session.score}</div>
+                                        <div className="league-total-col">
+                                            <div className="league-round-label">TOTAL</div>
+                                            <div className="league-total-val">{session.score}</div>
                                         </div>
                                     </div>
                                 )}
 
                                 {isLegacy && (
-                                    <div style={{ textAlign: 'center', padding: '15px', color: 'var(--text-muted)', fontSize: '0.85rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                                    <div className="legacy-notice">
                                         Legacy session. Detailed round data is unavailable.
                                     </div>
                                 )}
@@ -179,30 +163,29 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                 {!isLeague && !isWorld && !isLegacy && session.rounds && (
                                     <div
                                         className="seq-section"
-                                        style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setShowDetailsId(isDetailsVisible ? null : session.id);
                                         }}
                                     >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                            <span className="activity-section-title" style={{ margin: 0 }}>Round Sequence</span>
-                                            <span style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+                                        <div className="seq-header">
+                                            <span className="activity-section-title">Round Sequence</span>
+                                            <span className="seq-toggle-text">
                                                 {isDetailsVisible ? 'Hide Grid ▲' : 'Tap for Grid ▼'}
                                             </span>
                                         </div>
-                                        <div className="seq-container" style={{ display: 'flex', gap: '6px', padding: '4px 0', cursor: 'pointer' }}>
+                                        <div className="seq-container">
                                             {session.rounds.map((r, i) => {
                                                 const pct = Math.round((r.made / r.attempts) * 100);
                                                 if (pct === 100) {
                                                     return (
-                                                        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px' }}>
+                                                        <div key={i} className="seq-perfect-flame">
                                                             <Flame size={14} color="#f97316" fill="#f97316" />
                                                         </div>
                                                     );
                                                 }
                                                 return (
-                                                    <div key={i} className="seq-dot" style={{ width: '12px', height: '12px', borderRadius: '50%', ...getDotStyle(r.made, r.attempts) }} />
+                                                    <div key={i} className="seq-dot" style={getDotStyle(r.made, r.attempts)} />
                                                 );
                                             })}
                                         </div>
@@ -210,33 +193,26 @@ const ActivityList = ({ displayedHistory, expandedSession, toggleSession, delete
                                 )}
 
                                 {isDetailsVisible && session.rounds && (
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(auto-fill, minmax(55px, 1fr))',
-                                        gap: '10px', marginTop: '16px', padding: '12px',
-                                        background: '#f9fafb', borderRadius: '8px', border: '1px solid var(--border)',
-                                        animation: 'slideDownReveal 0.25s ease-out forwards'
-                                    }}>
+                                    <div className="details-grid">
                                         {session.rounds.map((r, i) => (
-                                            <div key={i} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
-                                                <span style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: '800' }}>Rd {i + 1}</span>
-                                                <span style={{ fontSize: '0.9rem', fontWeight: '900' }}>{r.made}/{r.attempts}</span>
-                                                <span style={{ fontSize: '0.65rem', color: '#6b7280' }}>{r.distance}'</span>
+                                            <div key={i} className="details-cell">
+                                                <span className="details-cell-label">Rd {i + 1}</span>
+                                                <span className="details-cell-val">{r.made}/{r.attempts}</span>
+                                                <span className="details-cell-dist">{r.distance}'</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
-                                <div className="activity-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px', marginTop: '15px' }}>
+                                <div className="activity-actions">
                                     {duplicateSession && onManualMerge && (
-                                        <button className="secondary-btn" onClick={(e) => { e.stopPropagation(); onManualMerge(duplicateSession, session); }} style={{ width: '100%', background: '#eff6ff', color: '#3b82f6', border: '1px solid #dbeafe', padding: '12px', borderRadius: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                        <button className="merge-btn" onClick={(e) => { e.stopPropagation(); onManualMerge(duplicateSession, session); }}>
                                             <LinkIcon size={16} /> Merge Duplicate Sessions
                                         </button>
                                     )}
                                     <button
                                         className="delete-btn"
                                         onClick={(e) => { e.stopPropagation(); deleteHistorySession(session.id); }}
-                                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '40%' }}
                                     >
                                         <Trash2 size={16} /> Delete Session
                                     </button>
