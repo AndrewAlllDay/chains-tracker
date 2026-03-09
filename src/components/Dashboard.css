@@ -1,0 +1,199 @@
+/* --- LAYOUT & HEADER --- */
+.dashboard-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    font-weight: 900;
+}
+
+/* --- STREAK & MILESTONES --- */
+.streak-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid;
+}
+
+.streak-pill.active {
+    background: var(--card-bg);
+    border-color: #ffedd5;
+}
+
+.streak-pill.inactive {
+    background: var(--bg);
+    border-color: var(--border);
+}
+
+.streak-milestone-banner {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.streak-milestone-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-style: italic;
+    font-weight: 500;
+}
+
+/* --- ACTION GRID --- */
+.dashboard-action-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* --- TRENDS & FILTERS (The Centering Fixes) --- */
+.trends-toggle-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    text-align: center;
+    width: 100%;
+    display: block;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.activity-filters-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    text-align: center;
+}
+
+.activity-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 450px;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.filter-btn.active {
+    background: var(--primary, #3b82f6);
+    color: #ffffff;
+}
+
+/* --- HISTORY FOOTER (The "View All" Fix) --- */
+.history-footer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.secondary-btn-full {
+    width: 65%;
+    padding: 15px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 12px;
+    color: #6b7280;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.secondary-btn-full:hover {
+    background: #e5e7eb;
+}
+
+/* --- ONBOARDING & PULSE --- */
+.onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    z-index: 3000;
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+}
+
+.coach-content-wrapper {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 340px;
+    text-align: center;
+    color: white;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes coach-pulse {
+    0% {
+        box-shadow: 0 0 0 0px rgba(255, 255, 255, 0.6);
+        transform: scale(1);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+        transform: scale(1.015);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
+        transform: scale(1);
+    }
+}
+
+.dashboard-action-grid.onboarding-active {
+    position: relative;
+    z-index: 3100;
+    pointer-events: auto !important;
+    overflow: visible !important;
+}
+
+.onboarding-active .action-card {
+    position: relative;
+    animation: coach-pulse 2.5s infinite ease-in-out !important;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    overflow: visible !important;
+}

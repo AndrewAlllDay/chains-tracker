@@ -1,0 +1,113 @@
+import React, { useState } from 'react';
+import { ArrowLeft, Flame, Info } from 'lucide-react'; // NEW: Imported Info
+import StandardMode from './StandardMode';
+import AroundTheWorld from './AroundTheWorld';
+import LadderMode from './LadderMode';
+
+export default function PracticeSession({ onSave, onCancel, initialMode = 'STANDARD', scoringStyle = 'PRO' }) {
+    const [mode] = useState(initialMode);
+    const [sessionRounds, setSessionRounds] = useState([]);
+
+    // NEW: Lifted the modal state up here so the header button can control it
+    const [showLadderIntro, setShowLadderIntro] = useState(true);
+
+    const handleLogRound = (newRound) => {
+        setSessionRounds(prev => [newRound, ...prev]);
+    };
+
+    const handleFinishSession = () => {
+        onSave(sessionRounds);
+    };
+
+    return (
+        <div className="container practice-session-view" style={{ position: 'relative', paddingBottom: '20px' }}>
+
+            {/* SYNCED NAV HEADER */}
+            <div className="session-nav" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '15px', minHeight: '40px' }}>
+                <button
+                    className="back-link"
+                    onClick={onCancel}
+                    style={{
+                        position: 'absolute', left: 0, background: 'none', border: 'none', outline: 'none',
+                        cursor: 'pointer', color: 'var(--text)', display: 'flex', alignItems: 'center',
+                        gap: '4px', fontSize: '1rem', fontWeight: '600'
+                    }}
+                >
+                    <ArrowLeft size={18} strokeWidth={2.5} />
+                    Exit
+                </button>
+
+                {/* NEW: Wrapped title in a flex container to align the Info button perfectly */}
+                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {mode === 'WORLD' ? 'Around the World' : mode === 'LADDER' ? 'Ladder Drill' : 'Practice Session'}
+
+                    {mode === 'LADDER' && (
+                        <button
+                            onClick={() => setShowLadderIntro(true)}
+                            style={{
+                                background: 'none', border: 'none', color: 'var(--text-muted)',
+                                cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', opacity: 0.7
+                            }}
+                        >
+                            <Info size={18} />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* ROUTE TO THE CORRECT GAME MODE */}
+            {mode === 'WORLD' ? (
+                <AroundTheWorld
+                    // FORCED: Always use SIMPLE scoring for Around the World
+                    scoringStyle="SIMPLE"
+                    onLogRound={handleLogRound}
+                    roundCount={sessionRounds.length}
+                    onFinish={handleFinishSession}
+                />
+            ) : mode === 'LADDER' ? (
+                <LadderMode
+                    scoringStyle={scoringStyle}
+                    onLogRound={handleLogRound}
+                    roundCount={sessionRounds.length}
+                    onFinish={handleFinishSession}
+                    // NEW: Pass the state down so the child component can render and close the modal
+                    showIntro={showLadderIntro}
+                    setShowIntro={setShowLadderIntro}
+                />
+            ) : (
+                <StandardMode
+                    scoringStyle={scoringStyle}
+                    onLogRound={handleLogRound}
+                    roundCount={sessionRounds.length}
+                    onFinish={handleFinishSession}
+                />
+            )}
+
+            {/* PROGRESS LIST (SHOWING ALL ROUNDS) */}
+            {/* UPDATED: History list is now exclusive to STANDARD mode again */}
+            {sessionRounds.length > 0 && mode === 'STANDARD' && (
+                <div style={{ marginTop: '15px' }}>
+                    <ul className="history-list">
+                        {sessionRounds.map((r) => {
+                            const isPerfectRound = r.made === r.attempts;
+                            return (
+                                <li key={r.id} className={`history-item session-item ${isPerfectRound ? 'perfect-round' : ''}`}>
+                                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ fontWeight: 'bold' }}>{r.distance}ft</span>
+                                            {r.firstPuttMade && <span style={{ fontSize: '0.6rem', background: '#fef3c7', color: '#d97706', padding: '1px 5px', borderRadius: '4px', fontWeight: '800' }}>CLUTCH</span>}
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            {isPerfectRound && <Flame size={16} color="#f97316" fill="#f97316" />}
+                                            <strong style={{ fontSize: '1.1rem' }}>{r.made}/{r.attempts}</strong>
+                                        </div>
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}

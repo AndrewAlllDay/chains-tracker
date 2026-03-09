@@ -1,0 +1,453 @@
+import { useState, useEffect, useRef } from 'react';
+import './App.css';
+import Dashboard from './components/Dashboard';
+import LoginLanding from './components/LoginLanding';
+import RoleSelector from './components/RoleSelector';
+import PracticeSession from './components/scoring/PracticeSession';
+import LeagueSession from './components/scoring/LeagueSession';
+import AppGuide from './components/AppGuide';
+import WhatsNewModal from './components/WhatsNewModal';
+import logoIcon from './assets/Dialed.svg';
+
+// --- COHESIVE ICONS ---
+import { Settings, Paperclip, AlertTriangle } from 'lucide-react';
+
+// --- FIREBASE IMPORTS ---
+import { db, auth, googleProvider } from './firebase';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+
+const CURRENT_VERSION = 3.3;
+
+// NEW: Station to distance mapping for on-the-fly history fixing
+const STATION_DISTANCES = { 1: 18, 2: 25, 3: 25, 4: 33, 5: 40 };
+
+function App() {
+  // --- STATE ---
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isFirestoreSynced, setIsFirestoreSynced] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [userRole, setUserRole] = useState(null);
+
+  // FIX 1: Set default scoring to SIMPLE and initialize off-season flags
+  const [userSettings, setUserSettings] = useState({
+    scoringStyle: 'SIMPLE',
+    hasCompletedOnboarding: false,
+    isLeagueArchived: false,
+    hasSeenSeasonWrapUp: false
+  });
+
+  const [needsRoleSelection, setNeedsRoleSelection] = useState(false);
+  const [view, setView] = useState('HOME');
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
+  const initialModalCheckDone = useRef(false);
+  const [versionData, setVersionData] = useState({ version: 0, count: 0 });
+  const [pendingSession, setPendingSession] = useState(null);
+
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    message: '',
+    type: 'default',
+    onConfirm: null,
+    onSecondary: null,
+    secondaryText: '',
+    isModeSelection: false,
+    onLadder: null,
+    ladderText: ''
+  });
+
+  // --- EFFECTS ---
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+      if (!currentUser) {
+        setHistory([]);
+        setUserRole(null);
+        setNeedsRoleSelection(false);
+        setIsFirestoreSynced(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      initialModalCheckDone.current = false;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+
+          // 1. Sync History
+          const rawHistory = data.history || [];
+          const sortedHistory = rawHistory.map(session => {
+            if (session.type === 'LEAGUE' && !session.rounds && session.details) {
+              const generatedRounds = [];
+              Object.values(session.details).forEach((stations) => {
+                Object.entries(stations).forEach(([stNum, made]) => {
+                  generatedRounds.push({
+                    distance: STATION_DISTANCES[stNum],
+                    made: made,
+                    attempts: 5,
+                    points: parseInt(stNum)
+                  });
+                });
+              });
+              return { ...session, rounds: generatedRounds };
+            }
+            return session;
+          }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          setHistory(sortedHistory);
+
+          // 2. Sync Settings
+          if (data.settings) {
+            setUserSettings(prev => ({
+              ...prev,
+              ...data.settings
+            }));
+          }
+
+          // 3. Version Tracking
+          const dbVersion = data.lastSeenVersion || 0;
+          const dbCount = data.versionViewCount || 0;
+          setVersionData({ version: dbVersion, count: dbCount });
+
+          if (!initialModalCheckDone.current) {
+            setShowUpdateModal(false);
+            initialModalCheckDone.current = true;
+          }
+
+          // 4. Role Sync
+          if (data.role) {
+            setUserRole(data.role);
+            setNeedsRoleSelection(false);
+          } else {
+            setUserRole(null);
+            setNeedsRoleSelection(true);
+          }
+        } else {
+          setHistory([]);
+          setUserRole(null);
+          setNeedsRoleSelection(true);
+          initialModalCheckDone.current = true;
+        }
+
+        setIsFirestoreSynced(true);
+      }, (error) => {
+        console.error("Firestore sync error:", error);
+        setIsFirestoreSynced(true);
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  // --- HELPERS ---
+
+  const updateSettings = async (newSettings) => {
+    const updated = { ...userSettings, ...newSettings };
+    setUserSettings(updated);
+
+    if (user) {
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          settings: updated
+        }, { merge: true });
+      } catch (e) {
+        console.error("Error saving settings:", e);
+      }
+    }
+  };
+
+  const handleDismissUpdate = async () => {
+    setShowUpdateModal(false);
+    if (user) {
+      try {
+        let newCount = 1;
+        if (versionData.version === CURRENT_VERSION) {
+          newCount = versionData.count + 1;
+        }
+        await setDoc(doc(db, "users", user.uid), {
+          lastSeenVersion: CURRENT_VERSION,
+          versionViewCount: newCount
+        }, { merge: true });
+      } catch (e) {
+        console.error("Error saving version flag:", e);
+      }
+    }
+  };
+
+  const saveHistoryToStorage = async (newSessionOrHistory) => {
+    const sortByDate = (list) => [...list].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    setHistory((prevHistory) => {
+      const updatedHistory = Array.isArray(newSessionOrHistory)
+        ? sortByDate(newSessionOrHistory)
+        : sortByDate([newSessionOrHistory, ...prevHistory]);
+
+      if (user) {
+        setDoc(doc(db, "users", user.uid), { history: updatedHistory }, { merge: true })
+          .catch(e => console.error("Error saving to database: ", e));
+      }
+
+      return updatedHistory;
+    });
+  };
+
+  const handleMergeSession = (existingSession, newSessionData) => {
+    const [olderSession, newerSession] = [existingSession, newSessionData].sort((a, b) => a.id - b.id);
+
+    const mergedSession = {
+      ...existingSession,
+      summary: {
+        attempts: (existingSession.summary?.attempts || 0) + (newSessionData.summary?.attempts || 0),
+        made: (existingSession.summary?.made || 0) + (newSessionData.summary?.made || 0)
+      },
+      rounds: [...(olderSession.rounds || []), ...(newerSession.rounds || [])]
+    };
+
+    const newHistory = history
+      .filter(s => s.id !== newSessionData.id)
+      .map(s => s.id === existingSession.id ? mergedSession : s);
+
+    saveHistoryToStorage(newHistory);
+    setPendingSession(null);
+    setView('HOME');
+  };
+
+  const processPracticeSave = (newSession) => {
+    const today = new Date().toLocaleDateString('en-US');
+    const existingToday = history.find(s =>
+      s.date === today &&
+      (s.type === 'PRACTICE' || s.type === 'LEAGUE') &&
+      !s.subType && !s.isLegacy
+    );
+
+    if (existingToday) {
+      setPendingSession({ existing: existingToday, new: newSession });
+    } else {
+      saveHistoryToStorage(newSession);
+      setView('HOME');
+    }
+  };
+
+  // FIX 2: Explicitly update settings state during role selection to trigger Onboarding
+  const handleRoleSelect = async (selectedRole) => {
+    if (user) {
+      try {
+        const freshSettings = { ...userSettings, hasCompletedOnboarding: false };
+
+        await setDoc(doc(db, "users", user.uid), {
+          role: selectedRole,
+          settings: freshSettings
+        }, { merge: true });
+
+        setUserRole(selectedRole);
+        setUserSettings(freshSettings); // Force immediate local update
+        setNeedsRoleSelection(false);
+      } catch (e) {
+        console.error("Error saving role:", e);
+      }
+    }
+  };
+
+  const handleLogin = async () => {
+    try { await signInWithPopup(auth, googleProvider); }
+    catch (error) { console.error("Login failed", error); }
+  };
+
+  const handleLogout = async () => { await signOut(auth); };
+
+  const closeAlert = () => { setAlertState(prev => ({ ...prev, isOpen: false })); };
+
+  const triggerModeSelect = () => {
+    setAlertState({
+      isOpen: true,
+      isModeSelection: true,
+      message: "Choose your practice mode:",
+      onConfirm: () => setView('SINGLE_SESSION'),
+      confirmText: 'Standard',
+      onSecondary: () => setView('WORLD_SESSION'),
+      secondaryText: 'Around The World',
+      onLadder: () => setView('LADDER_SESSION'),
+      ladderText: 'Ladder',
+    });
+  };
+
+  const triggerConfirm = (message, onConfirm, type = 'default') => {
+    setAlertState({
+      isOpen: true,
+      isModeSelection: false,
+      message,
+      type,
+      onConfirm,
+      confirmText: 'Confirm',
+      onSecondary: closeAlert,
+      secondaryText: 'Cancel',
+      onLadder: null,
+      ladderText: ''
+    });
+  };
+
+  const startSingleSession = () => triggerModeSelect();
+  const startLeagueSession = () => setView('LEAGUE');
+
+  const deleteHistorySession = (id) => {
+    triggerConfirm("Delete this entire past session?", () => {
+      const newHistory = history.filter(s => s.id !== id);
+      saveHistoryToStorage(newHistory);
+    }, 'danger');
+  }
+
+  const clearAllHistory = () => {
+    triggerConfirm("Delete ALL data? This cannot be undone.", () => {
+      saveHistoryToStorage([]);
+    }, 'danger');
+  }
+
+  if (loading || (user && !isFirestoreSynced)) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  if (!user) return <LoginLanding onLogin={handleLogin} />;
+
+  return (
+    <div className="container">
+      {needsRoleSelection ? (
+        <RoleSelector onSelect={handleRoleSelect} />
+      ) : (
+        <>
+          {view === 'HOME' && (
+            <Dashboard
+              user={user}
+              userRole={userRole}
+              history={history}
+              startSingleSession={startSingleSession}
+              startLeagueSession={startLeagueSession}
+              deleteHistorySession={deleteHistorySession}
+              clearAllHistory={clearAllHistory}
+              saveSession={(sess) => saveHistoryToStorage(sess)}
+              onManualMerge={handleMergeSession}
+              handleLogout={handleLogout}
+              userSettings={userSettings}
+              updateSettings={updateSettings}
+              showSettings={showSettings}
+              setShowSettings={setShowSettings}
+              handleRoleSelect={handleRoleSelect}
+              setShowGuideModal={setShowGuideModal}
+              logoIcon={logoIcon}
+              showGuideModal={showGuideModal}
+            />
+          )}
+
+          {view === 'LEAGUE' && (
+            <div className="session-view-wrapper">
+              <LeagueSession
+                onSave={(formattedRounds, finalScore) => {
+                  const newSession = {
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString('en-US'),
+                    type: 'LEAGUE',
+                    subType: 'LEAGUE',
+                    score: finalScore,
+                    rounds: formattedRounds,
+                    summary: {
+                      attempts: formattedRounds.length * 5,
+                      made: formattedRounds.reduce((acc, r) => acc + r.made, 0)
+                    }
+                  };
+                  saveHistoryToStorage(newSession);
+                  setView('HOME');
+                }}
+                onCancel={() => triggerConfirm("Exit League? Progress will be lost.", () => setView('HOME'), 'danger')}
+              />
+            </div>
+          )}
+
+          {(view === 'SINGLE_SESSION' || view === 'WORLD_SESSION' || view === 'LADDER_SESSION') && (
+            <div className="session-view-wrapper">
+              <PracticeSession
+                initialMode={view === 'WORLD_SESSION' ? "WORLD" : view === 'LADDER_SESSION' ? "LADDER" : "STANDARD"}
+                scoringStyle={userSettings.scoringStyle}
+                onSave={(finalData) => {
+                  const totalAtt = finalData.reduce((acc, r) => acc + r.attempts, 0);
+                  const totalMade = finalData.reduce((acc, r) => acc + r.made, 0);
+
+                  const newSession = {
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString('en-US'),
+                    type: 'PRACTICE',
+                    summary: { attempts: totalAtt, made: totalMade },
+                    rounds: finalData
+                  };
+
+                  if (view === 'WORLD_SESSION') {
+                    newSession.subType = 'WORLD';
+                    saveHistoryToStorage(newSession);
+                    setView('HOME');
+                  } else if (view === 'LADDER_SESSION') {
+                    newSession.subType = 'LADDER';
+                    saveHistoryToStorage(newSession);
+                    setView('HOME');
+                  } else {
+                    processPracticeSave(newSession);
+                  }
+                }}
+                onCancel={() => setView('HOME')}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {pendingSession && (
+        <div className="modal-overlay" style={{ zIndex: 4000 }}>
+          <div className="modal-content" style={{ textAlign: 'center', maxWidth: '400px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '15px' }}>
+              <Paperclip size={48} color="var(--primary)" />
+            </div>
+            <h2 style={{ marginBottom: '10px', fontWeight: '900' }}>Daily Practice <br /> Detected!</h2>
+            <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>
+              You already logged a session today. Would you like to combine them?
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <button className="save-btn" onClick={() => handleMergeSession(pendingSession.existing, pendingSession.new)}>Combine Sessions</button>
+              <button onClick={() => { saveHistoryToStorage(pendingSession.new); setPendingSession(null); setView('HOME'); }} className="secondary-btn">Save Separately</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {alertState.isOpen && (
+        <div className="modal-overlay" onClick={closeAlert} style={{ zIndex: 2000 }}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3 className="modal-title" style={{ color: alertState.type === 'danger' ? '#ef4444' : '#1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              {alertState.isModeSelection ? 'Mode Selection' : (
+                alertState.type === 'danger'
+                  ? <><AlertTriangle size={20} /> Warning</>
+                  : 'Confirm'
+              )}
+            </h3>
+            <p style={{ marginBottom: '25px', fontSize: '1.1rem', lineHeight: '1.5' }}>{alertState.message}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <button onClick={() => { alertState.onConfirm(); closeAlert(); }} className={!alertState.isModeSelection ? "save-btn" : "secondary-btn"}>{alertState.confirmText}</button>
+              <button onClick={() => { if (alertState.onSecondary) alertState.onSecondary(); closeAlert(); }} className="secondary-btn">{alertState.secondaryText}</button>
+              {alertState.isModeSelection && alertState.onLadder && (
+                <button onClick={() => { alertState.onLadder(); closeAlert(); }} className="secondary-btn">{alertState.ladderText}</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <AppGuide isOpen={showGuideModal} onClose={() => setShowGuideModal(false)} userRole={userRole} />
+      <WhatsNewModal isOpen={showUpdateModal} onClose={handleDismissUpdate} />
+
+    </div>
+  );
+}
+
+export default App;

@@ -1,0 +1,120 @@
+/* Settings Modal - Android / Material Design 3 Style */
+.settings-modal-content {
+    max-width: 420px !important;
+    padding: 24px !important;
+    border-radius: 28px !important;
+    /* M3 extra rounded corners */
+    text-align: left !important;
+    background-color: #f7f9fc !important;
+    /* Light surface tone */
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-weight: 400;
+    /* Android uses cleaner, lighter weights for headers */
+    font-size: 1.5rem;
+    color: #1f1f1f;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 16px;
+    margin-bottom: 8px;
+    background: #ffffff;
+    border-radius: 16px;
+    /* Grouped card look */
+    transition: background-color 0.2s;
+}
+
+.setting-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.setting-info label {
+    margin-bottom: 0;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #1f1f1f;
+}
+
+/* --- ANDROID SWITCH (Material You) --- */
+.toggle-switch {
+    width: 52px;
+    height: 32px;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid #79747e;
+    /* Outline state */
+}
+
+.toggle-switch.active {
+    background-color: var(--primary);
+    /* Your brand orange */
+    border-color: var(--primary);
+}
+
+.toggle-switch.inactive {
+    background-color: #e1e2e9;
+    border-color: #79747e;
+}
+
+.toggle-knob {
+    width: 16px;
+    /* Smaller thumb when off */
+    height: 16px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 6px;
+    background-color: #79747e;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch.active .toggle-knob {
+    left: 26px;
+    width: 24px;
+    /* Thumb grows when active in M3 */
+    height: 24px;
+    background-color: #ffffff;
+}
+
+/* --- MATERIAL BUTTON --- */
+.logout-action-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 100px;
+    /* Fully pill-shaped */
+    color: #ffffff;
+    background: #1f1f1f;
+    /* Dark Android neutral */
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.logout-action-btn:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
